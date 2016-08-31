@@ -1,0 +1,19 @@
+{
+  "name": "botman",
+  "private": true,
+  "scripts": {
+    "start": "meteor run --settings settings-development.json",
+    "deploy": "mup deploy --config=mup.js --settings=settings-production.json"
+  },
+  "dependencies": {
+    "bufferutil": "^1.2.1",
+    "discord.js": "^8.1.0",
+    "lodash": "^4.15.0",
+    "meteor-node-stubs": "~0.2.0",
+    "moment": "^2.14.1",
+    "utf-8-validate": "^1.2.1"
+  },
+  "devDependencies": {
+    "standard": "^8.0.0"
+  }
+}
