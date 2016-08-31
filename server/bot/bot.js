@@ -1,13 +1,21 @@
 import {Meteor} from 'meteor/meteor'
 import Discord from 'discord.js'
 import _ from 'lodash'
+import LastfmAPI from 'lastfmapi'
 
 const isDevelopment = Meteor.settings.isDevelopment
+const isProduction = Meteor.settings.isProduction
 
 export default function () {
   let bot = new Discord.Client()
   let settings = Meteor.settings.discord
   let prefix = settings.prefix
+
+  // Last.fm API instance
+  let lfm = new LastfmAPI({
+    'api_key': Meteor.settings.lastfm.api_key,
+    'secret': Meteor.settings.lastfm.secret
+  })
 
   // Stuff to do when bot is ready
   bot.on('ready', () => {
@@ -17,14 +25,16 @@ export default function () {
   // Stuff to do when someone new joins the server
   bot.on('serverNewMember', Meteor.bindEnvironment((server, user) => {
     console.log(`New User "${user.username}" has joined "${server.name}"`)
-    bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
-    Meteor.call('users.register', user, (error, data) => {
-      if (error) {
-        console.error(`Error: ${error.reason}`)
-      } else {
-        console.log(`Registered User "${user.username}" (_id: ${data})`)
-      }
-    })
+    if (isProduction) {
+      bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
+      Meteor.call('users.register', user, (error, data) => {
+        if (error) {
+          console.error(`Error: ${error.reason}`)
+        } else {
+          console.log(`Registered User "${user.username}" (_id: ${data})`)
+        }
+      })
+    }
   }))
 
   // Stuff to do when someone leaves the server
@@ -32,10 +42,13 @@ export default function () {
     console.log(`User "${user.username}" has left "${server.name}"`)
   })
 
+  let loggables = ['bear', 'cofe', 'wine', 'vater', 'tea']
+
   // Define simple response cases and prefix them
   let simpleResponses = _.mapKeys({
     'draw': 'http://isocyanide.xyz/draw',
-    'github': 'https://github.com/nodepowered/botman'
+    'github': 'https://github.com/nodepowered/botman',
+    'loggables': loggables.join(', ')
   }, (value, key) => {
     return prefix + key
   })
@@ -46,8 +59,6 @@ export default function () {
     }
   }
 
-  let loggables = ['bear', 'cofe', 'wine', 'vater']
-
   // Process messages
   bot.on('message', Meteor.bindEnvironment((msg) => {
     // Exit if msg is from a bot
@@ -56,12 +67,18 @@ export default function () {
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) return
 
-    // ------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------
     // Local testing functions (not deployed to production)
+    if (isDevelopment) {
+      // let args = msg.content.split(' ')
+      // let command = args[0].substring(1) // Command without prefix
 
-    if (isDevelopment) return
-    // !!! Only tested, production ready functions from this point on !!!
-    // ------------------------------------------------------------------
+      // New functions go here first for local testing
+
+      return
+    }
+    // !!! Only tested, production ready functions beyond this point !!!
+    // -----------------------------------------------------------------------------------------
 
     // Check if it's a case of a simple response
     if (simpleResponses[msg.content]) {
@@ -98,8 +115,8 @@ export default function () {
           bot.reply(msg, `:coffee: #${data.today} registered (${data.total} total :coffee: for him)`)
         }
       })
-    } else if (command === 'vater' || command === 'water') {
-      Meteor.call('logs.register', msg.author.name, 'wine', (error, data) => {
+    } else if (command === 'water' || command === 'vater') {
+      Meteor.call('logs.register', msg.author.name, 'water', (error, data) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -114,6 +131,15 @@ export default function () {
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
           bot.reply(msg, `:wine_glass: #${data.today} registered (${data.total} total :wine_glass: for him)`)
+        }
+      })
+    } else if (command === 'tea') {
+      Meteor.call('logs.register', msg.author.name, 'tea', (error, data) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.reply(msg, `:tea: #${data.today} registered (${data.total} total :tea: for him)`)
         }
       })
     } else if (command === 'log' && args[1]) { // Are we logging something else?
@@ -140,6 +166,53 @@ export default function () {
           bot.reply(msg, 'Registered successfully!')
         }
       })
+    } else if (command === 'set' && args[1] === 'lastfm' && args[2]) { // Setting lastfm username
+      Meteor.call('users.set', msg.author.name, 'lastfm', args[2], (error, data) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.reply(msg, 'Last.fm username set!')
+        }
+      })
+    } else if (command === 'lastfm' || command === 'lfm') { // Request last played song from Last.fm
+      if (args[1]) {
+        let params = {
+          limit: 1,
+          user: args[1]
+        }
+        lfm.user.getRecentTracks(params, (error, recentTracks) => {
+          if (error) {
+            console.error(error)
+            bot.reply(msg, `Error: ${error.reason}`)
+          } else {
+            let np = recentTracks.track[0]
+            bot.reply(msg, `**${args[1]}** np: *${np.artist['#text']}* - *${np.name}* :notes:`)
+          }
+        })
+      } else {
+        Meteor.call('users.get', msg.author.name, 'lastfm', (error, response) => {
+          if (error) {
+            console.error(error)
+            bot.reply(msg, `Error: ${error.reason}`)
+          } else {
+            // Proceed to query Last.fm API
+            let params = {
+              limit: 1,
+              user: response
+            }
+            lfm.user.getRecentTracks(params, (error, recentTracks) => {
+              if (error) {
+                console.error(error)
+                bot.reply(msg, `Error: ${error.reason}`)
+              } else {
+                let np = recentTracks.track[0]
+                bot.reply(msg, `np: *${np.artist['#text']}* - *${np.name}* :notes:`)
+              }
+            })
+          }
+        })
+      }
     }
   }))
 
