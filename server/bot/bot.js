@@ -40,6 +40,9 @@ export default function () {
   // Stuff to do when someone leaves the server
   bot.on('serverMemberRemoved', (server, user) => {
     console.log(`User "${user.username}" has left "${server.name}"`)
+    if (isProduction) {
+      bot.sendMessage(server.defaultChannel, `**${user.username}** has quitted! What a n00b! :laughing:`)
+    }
   })
 
   let loggables = ['bear', 'cofe', 'wine', 'vater', 'tea']
@@ -106,7 +109,7 @@ export default function () {
           bot.sendMessage(msg, `:beer: #${data.today} todey for ${msg.author.mention()} putted (${data.total} :beers: total for him)`)
         }
       })
-    } else if (command === 'cofe' || command === 'coffee') {
+    } else if (command === 'cofe' || command === 'coffee' || command === 'gofe') {
       Meteor.call('logs.register', msg.author.name, 'cofe', (error, data) => {
         if (error) {
           console.error(error)
