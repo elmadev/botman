@@ -1,0 +1,219 @@
+[
+  {
+    "item": "apple",
+    "singular": ":apple:",
+    "plural": ":apple:",
+    "aliases": ["aple"],
+    "category": "food"
+  },
+  {
+    "item": "ananas",
+    "singular": ":pineapple:",
+    "plural": ":pineapple:",
+    "aliases": ["pineapple", "pineaple"],
+    "category": "food"
+  },
+  {
+    "item": "bacon",
+    "singular": ":bacon:",
+    "plural": ":bacon:",
+    "aliases": ["bakon"],
+    "category": "food"
+  },
+  {
+    "item": "banana",
+    "singular": ":banana:",
+    "plural": ":banana:",
+    "aliases": ["banan"],
+    "category": "food"
+  },
+  {
+    "item": "bear",
+    "singular": ":beer:",
+    "plural": ":beers:",
+    "aliases": ["beer"],
+    "category": "beverage"
+  },
+  {
+    "item": "bread",
+    "singular": ":bread:",
+    "plural": ":bread:",
+    "aliases": ["bred"],
+    "category": "food"
+  },
+  {
+    "item": "burger",
+    "singular": ":hamburger:",
+    "plural": ":hamburger:",
+    "aliases": ["hamburger", "cheezburger", "cheeseburger"],
+    "category": "food"
+  },
+  {
+    "item": "cake",
+    "singular": ":cake:",
+    "plural": ":cake:",
+    "aliases": ["cakeslice"],
+    "category": "food"
+  },
+  {
+    "item": "chiken",
+    "singular": ":poultry_leg:",
+    "plural": ":poultry_leg:",
+    "aliases": ["chicken", "drumstick", "chikin", "drumstix"],
+    "category": "food"
+  },
+  {
+    "item": "chocolate",
+    "singular": ":chocolate_bar:",
+    "plural": ":chocolate_bar:",
+    "aliases": ["chokolate"],
+    "category": "food"
+  },
+  {
+    "item": "cofe",
+    "singular": ":coffee:",
+    "plural": ":coffee:",
+    "aliases": ["coffee", "gofe", "kofe", "kaffe"],
+    "category": "beverage"
+  },
+  {
+    "item": "egs",
+    "singular": ":egg:",
+    "plural": ":egg:",
+    "aliases": ["eg", "egg"],
+    "category": "food"
+  },
+  {
+    "item": "fries",
+    "singular": ":fries:",
+    "plural": ":fries:",
+    "aliases": ["frys"],
+    "category": "food"
+  },
+  {
+    "item": "gym",
+    "singular": ":lifter:",
+    "plural": ":lifter:",
+    "aliases": ["lifting", "gains", "gainz"],
+    "category": "activity"
+  },
+  {
+    "item": "icecream",
+    "singular": ":icecream:",
+    "plural": ":icecream:",
+    "aliases": ["popsicle"],
+    "category": "food"
+  },
+  {
+    "item": "kebab",
+    "singular": ":stuffed_pita:",
+    "plural": ":stuffed_pita:",
+    "aliases": ["kebap"],
+    "category": "food"
+  },
+  {
+    "item": "milk",
+    "singular": ":milk:",
+    "plural": ":milk:",
+    "aliases": [],
+    "category": "beverage"
+  },
+  {
+    "item": "noodles",
+    "singular": ":ramen:",
+    "plural": ":ramen:",
+    "aliases": ["nodles", "ramen"],
+    "category": "food"
+  },
+  {
+    "item": "pancakes",
+    "singular": ":pancakes:",
+    "plural": ":pancakes:",
+    "aliases": ["pancake"],
+    "category": "food"
+  },
+  {
+    "item": "pasta",
+    "singular": ":spaghetti:",
+    "plural": ":spaghetti:",
+    "aliases": ["spageti", "spaghetti"],
+    "category": "food"
+  },
+  {
+    "item": "piza",
+    "singular": ":pizza:",
+    "plural": ":pizza:",
+    "aliases": ["pizza"],
+    "category": "food"
+  },
+  {
+    "item": "rice",
+    "singular": ":rice:",
+    "plural": ":rice:",
+    "aliases": [],
+    "category": "food"
+  },
+  {
+    "item": "run",
+    "singular": ":runner:",
+    "plural": ":runner:",
+    "aliases": ["jog"],
+    "category": "activity"
+  },
+  {
+    "item": "salad",
+    "singular": ":salad:",
+    "plural": ":salad:",
+    "aliases": ["salat"],
+    "category": "food"
+  },
+  {
+    "item": "shower",
+    "singular": ":shower:",
+    "plural": ":shower:",
+    "aliases": ["shover"],
+    "category": "activity"
+  },
+  {
+    "item": "soup",
+    "singular": ":stew:",
+    "plural": ":stew:",
+    "aliases": ["stew"],
+    "category": "food"
+  },
+  {
+    "item": "sushi",
+    "singular": ":sushi:",
+    "plural": ":sushi:",
+    "aliases": [],
+    "category": "food"
+  },
+  {
+    "item": "tea",
+    "singular": ":tea:",
+    "plural": ":tea:",
+    "aliases": ["chai"],
+    "category": "beverage"
+  },
+  {
+    "item": "water",
+    "singular": ":potable_water:",
+    "plural": ":potable_water:",
+    "aliases": ["vater", "h2o"],
+    "category": "beverage"
+  },
+  {
+    "item": "whisky",
+    "singular": ":whisky:",
+    "plural": ":whisky:",
+    "aliases": ["whiskey", "scotch"],
+    "category": "beverage"
+  },
+  {
+    "item": "wine",
+    "singular": ":wine_glass:",
+    "plural": ":wine_glass:",
+    "aliases": ["vine"],
+    "category": "beverage"
+  }
+]

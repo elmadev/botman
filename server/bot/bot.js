@@ -2,52 +2,41 @@ import {Meteor} from 'meteor/meteor'
 import Discord from 'discord.js'
 import _ from 'lodash'
 import LastfmAPI from 'lastfmapi'
-
-const isDevelopment = Meteor.settings.isDevelopment
-const isProduction = Meteor.settings.isProduction
+// import loggables from './loggables'
 
 export default function () {
   let bot = new Discord.Client()
   let settings = Meteor.settings.discord
   let prefix = settings.prefix
 
-  // Last.fm API instance
   let lfm = new LastfmAPI({
     'api_key': Meteor.settings.lastfm.api_key,
     'secret': Meteor.settings.lastfm.secret
   })
 
-  // Stuff to do when bot is ready
   bot.on('ready', () => {
     console.log(`Ready in ${bot.channels.length} channels on ${bot.servers.length} servers, for a total of ${bot.users.length} users.`)
   })
 
-  // Stuff to do when someone new joins the server
   bot.on('serverNewMember', Meteor.bindEnvironment((server, user) => {
     console.log(`New User "${user.username}" has joined "${server.name}"`)
-    if (isProduction) {
-      bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
-      Meteor.call('users.register', user, (error, data) => {
-        if (error) {
-          console.error(`Error: ${error.reason}`)
-        } else {
-          console.log(`Registered User "${user.username}" (_id: ${data})`)
-        }
-      })
-    }
+    bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
+    Meteor.call('users.register', user, (error, data) => {
+      if (error) {
+        console.error(`Error: ${error.reason}`)
+      } else {
+        console.log(`Registered User "${user.username}" (_id: ${data})`)
+      }
+    })
   }))
 
-  // Stuff to do when someone leaves the server
   bot.on('serverMemberRemoved', (server, user) => {
     console.log(`User "${user.username}" has left "${server.name}"`)
-    if (isProduction) {
-      bot.sendMessage(server.defaultChannel, `**${user.username}** has quitted! What a n00b! :laughing:`)
-    }
+    bot.sendMessage(server.defaultChannel, `**${user.username}** has quitted! What a n00b! :laughing:`)
   })
 
   let loggables = ['bear', 'cofe', 'wine', 'vater', 'tea']
 
-  // Define simple response cases and prefix them
   let simpleResponses = _.mapKeys({
     'draw': 'http://isocyanide.xyz/draw',
     'github': 'https://github.com/nodepowered/botman',
@@ -69,19 +58,6 @@ export default function () {
 
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) return
-
-    // -----------------------------------------------------------------------------------------
-    // Local testing functions (not deployed to production)
-    if (isDevelopment) {
-      // let args = msg.content.split(' ')
-      // let command = args[0].substring(1) // Command without prefix
-
-      // New functions go here first for local testing
-
-      return
-    }
-    // !!! Only tested, production ready functions beyond this point !!!
-    // -----------------------------------------------------------------------------------------
 
     // Check if it's a case of a simple response
     if (simpleResponses[msg.content]) {
@@ -145,21 +121,25 @@ export default function () {
           bot.reply(msg, `:tea: #${data.today} registered (${data.total} total :tea: for him)`)
         }
       })
-    } else if (command === 'log' && args[1]) { // Are we logging something else?
+
+    // Are we logging something else?
+    } else if (command === 'log' && args[1]) {
       let item = args[1]
-      if (loggables.indexOf(item) === -1) {
-        bot.reply(msg, `Sorry, item not recognized.`)
-        return
-      }
-      Meteor.call('logs.register', msg.author.name, args[1], (error, data) => {
+      // if (loggables.indexOf(item) === -1) {
+      //   bot.reply(msg, `Sorry, item not recognized.`)
+      //   return
+      // }
+      Meteor.call('logs.register', msg.author.name, item, (error, data) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.reply(msg, `${args[1]} #${data.today} registered (${data.total} total ${args[1]} for him)`)
+          bot.reply(msg, `${item} #${data.today} registered (${data.total} total ${item} for him)`)
         }
       })
-    } else if (command === 'register') { // Register command for those who joined server before bot started registering people
+
+    // Profile registration command for those who joined server before bot started registering people
+    } else if (command === 'register' || command === 'reg') {
       Meteor.call('users.register', msg.author.name, (error, data) => {
         if (error) {
           console.error(`Error: ${error.reason}`)
@@ -169,7 +149,9 @@ export default function () {
           bot.reply(msg, 'Registered successfully!')
         }
       })
-    } else if (command === 'set' && args[1] === 'lastfm' && args[2]) { // Setting lastfm username
+
+    // Setting lastfm username
+    } else if (command === 'set' && args[1] === 'lastfm' && args[2]) {
       Meteor.call('users.set', msg.author.name, 'lastfm', args[2], (error, data) => {
         if (error) {
           console.error(error)
@@ -178,7 +160,9 @@ export default function () {
           bot.reply(msg, 'Last.fm username set!')
         }
       })
-    } else if (command === 'lastfm' || command === 'lfm') { // Request last played song from Last.fm
+
+    // Request last played song from Last.fm
+    } else if (command === 'lastfm' || command === 'lfm') {
       if (args[1]) {
         let params = {
           limit: 1,
@@ -216,6 +200,17 @@ export default function () {
           }
         })
       }
+
+    // Display logging totals stats
+    } else if (command === 'today' || command === 'week' || command === 'month' || command === 'year' && args[1]) {
+      Meteor.call('logs.getStats', args[1], command, (error, data) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.sendMessage(msg, `**Top loggers of ${args[1]} ${command !== 'today' ? 'this' : ''} ${command}:**\n${data.top}\n*Total:* ${data.total}`)
+        }
+      })
     }
   }))
 

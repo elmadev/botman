@@ -1,6 +1,6 @@
 # botman - the [ElastoMania Discord](http://tinyurl.com/elmadiscord) bot
 
-Project includes a multi-purpose Discord bot based on [discord.js](https://github.com/hydrabolt/discord.js/) and a stats website built on [Meteor](https://meteor.com).
+Project includes a multi-purpose Discord bot based on [discord.js](https://github.com/hydrabolt/discord.js/) and (eventually) a stats website built on [Meteor](https://meteor.com).
 
 Feel free to contribute.
 

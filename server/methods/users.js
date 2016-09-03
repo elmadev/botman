@@ -1,6 +1,8 @@
 import {Users} from '/lib/collections'
+import {Logs} from '/lib/collections'
 import {Meteor} from 'meteor/meteor'
 import {check} from 'meteor/check'
+import moment from 'moment'
 
 export default function () {
   Meteor.methods({
@@ -51,6 +53,22 @@ export default function () {
       } else {
         throw new Meteor.Error(500, `User "${username}" hasn't set their last.fm username!`)
       }
+    },
+
+    'users.getStats'(username, item, when) {
+      check(username, String)
+      check(item, String)
+      check(when, String) // Should be 'day', 'week', 'month', or 'year'
+
+      let date = moment().startOf(when).toDate()
+
+      let count = Logs.find({
+        username: username,
+        item: item,
+        createdAt: {$gte: date}
+      }).count()
+
+      return count
     }
   })
 }
