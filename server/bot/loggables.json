@@ -112,6 +112,13 @@
     "category": "food"
   },
   {
+    "item": "juice",
+    "singular": "juice",
+    "plural": "juices",
+    "aliases": ["jews"],
+    "category": "beverage"
+  },
+  {
     "item": "kebab",
     "singular": ":stuffed_pita:",
     "plural": ":stuffed_pita:",
