@@ -207,7 +207,7 @@ export default function () {
           let mentions = response.reduce((prev, current, index) => {
             return `${prev}${getMention(current)} `
           }, '')
-          bot.sendMessage(msg, `Someone said ${prefix}${command} #${mentions}`)
+          bot.sendMessage(msg, `Someone said ${prefix}${command} ${mentions}`)
         }
       })
     }
