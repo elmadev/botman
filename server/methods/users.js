@@ -19,10 +19,12 @@ export default function () {
       })
     },
 
-    'users.set' (discordId, field, value) {
+    'users.set' (discordId, field, args) {
       check(discordId, String)
       check(field, String)
-      check(value, String)
+      check(args, [String])
+
+      let value = args.join(' ')
 
       if (!Users.findOne({ discordId: discordId })) {
         Meteor.wrapAsync(Meteor.call('users.register', discordId))

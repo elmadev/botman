@@ -106,12 +106,12 @@ export default function () {
 
     // Set a user profile setting
     } else if (command === 'set' && allowedProfileFields.indexOf(args[0]) > -1 && args[1]) {
-      Meteor.call('users.set', msg.author.id, args[0], args[1], (error, response) => {
+      Meteor.call('users.set', msg.author.id, args[0], _.drop(args), (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.reply(msg, 'Last.fm username set!')
+          bot.reply(msg, 'Setting set!')
         }
       })
 
@@ -204,7 +204,7 @@ export default function () {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          let mentions = response.top.reduce((prev, current, index) => {
+          let mentions = response.reduce((prev, current, index) => {
             return `${prev}${getMention(current)} `
           }, '')
           bot.sendMessage(msg, `Someone said ${prefix}${command} #${mentions}`)
