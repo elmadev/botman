@@ -77,6 +77,20 @@
     "category": "food"
   },
   {
+    "item": "cocoa",
+    "singular": "cocoa",
+    "plural": "cocoas",
+    "aliases": ["oboy", "neskvik", "nesquick", "litago"],
+    "category": "beverage"
+  },
+  {
+    "item": "cola",
+    "singular": "cola",
+    "plural": "colas",
+    "aliases": ["coke", "pepsi"],
+    "category": "beverage"
+  },
+  {
     "item": "cofe",
     "singular": ":coffee:",
     "plural": ":coffee:",
@@ -186,6 +200,13 @@
     "singular": ":salad:",
     "plural": ":salad:",
     "aliases": ["salat"],
+    "category": "food"
+  },
+  {
+    "item": "sandwich",
+    "singular": "sandwich",
+    "plural": "sandwiches",
+    "aliases": ["sandwitch", "sandbitch", "subway", "sub", "buterbrod", "butterbread"],
     "category": "food"
   },
   {

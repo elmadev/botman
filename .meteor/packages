@@ -17,6 +17,9 @@ es5-shim@4.6.14                # ECMAScript 5 compatibility for older browsers.
 ecmascript@0.5.8              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.2.1            # Server-side component of the `meteor shell` command
 
+autopublish
+insecure
+
 check
 audit-argument-checks
 seba:minifiers-autoprefixer
@@ -24,3 +27,4 @@ fourseven:scss
 poetic:materialize-scss
 themeteorchef:bert
 aldeed:collection2
+msavin:mongol

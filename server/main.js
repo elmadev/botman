@@ -7,7 +7,8 @@ Meteor.startup(() => {
   bot()
 
   Meteor.setTimeout(function () {
-    // Test methods and stuff here
+    // Meteor.call('users.fix')
+    // Meteor.call('logs.fix')
   }, 1000)
 })
 

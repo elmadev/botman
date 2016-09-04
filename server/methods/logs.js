@@ -3,32 +3,33 @@ import {Meteor} from 'meteor/meteor'
 import {check} from 'meteor/check'
 import moment from 'moment'
 import _ from 'lodash'
+import {userIds} from '../bot/settings'
 
 export default function () {
   Meteor.methods({
-    'logs.register'(username, item) {
-      check(username, String)
+    'logs.register' (discordId, item) {
+      check(discordId, String)
       check(item, String)
 
       Logs.insert({
-        username: username,
+        discordId: discordId,
         item: item,
-        createdAt: new Date()
+        loggedAt: new Date()
       })
 
       let today = moment().startOf('day').toDate()
       let todayCount = Logs.find({
-        username: username,
+        discordId: discordId,
         item: item,
-        createdAt: {$gte: today}
+        loggedAt: {$gte: today}
       }).count()
 
       let totalCount = Logs.find({
-        username: username,
+        discordId: discordId,
         item: item
       }).count()
 
-      console.log(`${username} logged a ${item}`)
+      console.log(`"${discordId}" logged a ${item}`)
 
       return {
         today: todayCount,
@@ -36,7 +37,7 @@ export default function () {
       }
     },
 
-    'logs.getStats'(item, when) {
+    'logs.getStats' (item, when) {
       check(item, String)
       check(when, String) // Should be 'day', 'week', 'month', or 'year'
 
@@ -44,31 +45,52 @@ export default function () {
 
       let allLogs = Logs.find({
         item: item,
-        createdAt: {$gte: date}
+        loggedAt: {$gte: date}
       }).fetch()
 
       let allStats = _.reduce(allLogs, (result, value) => {
-        if (!result[value.username]) result[value.username] = 1
-        else result[value.username]++
+        if (!result[value.discordId]) result[value.discordId] = 1
+        else result[value.discordId]++
         return result
       }, {})
 
       let statsToSort = Object.keys(allStats).map(key => {
-        return { username: key, logs: allStats[key] }
+        return { discordId: key, logs: allStats[key] }
       })
 
       let topStats = _.sortBy(statsToSort, 'logs').reverse()
 
       let top = topStats.slice(0, 10)
 
-      let topMsg = top.reduce((prev, current, index) => {
-        return prev + '**' + (index + 1) + '.** ' + current.username + '[' + current.logs + '] '
-      }, '')
-
       return {
         total: allLogs.length,
-        top: topMsg
+        top: top
       }
+    },
+
+    'logs.fix' () {
+      Logs.find().forEach((o) => {
+        if (!o.discordId || typeof o.discordId !== 'string') {
+          let userId = _.pick(userIds, o.username)[o.username].toString() || '140619555339763712'
+          let update = {
+            '$set': {
+              'discordId': userId,
+              'loggedAt': o.createdAt
+            },
+            '$unset': {
+              'username': '',
+              'createdAt': ''
+            }
+          }
+
+          Logs.update({
+            _id: o._id
+          }, update)
+
+          console.log('Before: ', o)
+          console.log('After: ', Logs.findOne(o._id))
+        }
+      })
     }
   })
 }

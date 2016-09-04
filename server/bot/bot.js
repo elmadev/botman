@@ -2,8 +2,9 @@ import {Meteor} from 'meteor/meteor'
 import Discord from 'discord.js'
 import _ from 'lodash'
 import LastfmAPI from 'lastfmapi'
-import Loggables from './loggables'
 import Responses from './responses'
+import Loggables from './loggables'
+import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers} from './settings'
 
 export default function () {
   let bot = new Discord.Client()
@@ -15,29 +16,30 @@ export default function () {
     'secret': Meteor.settings.lastfm.secret
   })
 
-  let loggableItemsWithAliases = Loggables.reduce((prev, current) => {
-    return _.concat(prev, current.item, current.aliases)
-  }, []).sort()
+  let getNick = (server, discordId) => {
+    let user = bot.users.get(discordId.toString())
+    return server.detailsOf(user).nick || user.username
+  }
 
   bot.on('ready', () => {
     console.log(`Ready in ${bot.channels.length} channels on ${bot.servers.length} servers, for a total of ${bot.users.length} users.`)
   })
 
   bot.on('serverNewMember', Meteor.bindEnvironment((server, user) => {
-    console.log(`New User "${user.username}" has joined "${server.name}"`)
-    bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
-    Meteor.call('users.register', user.username, (error, data) => {
+    console.log(`New User "${user.username}" (id: ${user.id}) has joined "${server.name}"`)
+    bot.sendMessage(server.defaultChannel, `**${getNick(server, user.id)}** has joined! Welcome :heart:`)
+    Meteor.call('users.register', user.id, (error, response) => {
       if (error) {
         console.error(`Error: ${error.reason}`)
       } else {
-        console.log(`Registered User "${user.username}" (_id: ${data})`)
+        console.log(`Registered User "${user.username}" (_id: ${response})`)
       }
     })
   }))
 
   bot.on('serverMemberRemoved', (server, user) => {
-    console.log(`User "${user.username}" has left "${server.name}"`)
-    bot.sendMessage(server.defaultChannel, `**${user.username}** has quitted! What a n00b! :laughing:`)
+    console.log(`User "${user.username}" (id: ${user.id}) has left "${server.name}"`)
+    bot.sendMessage(server.defaultChannel, `**${getNick(server, user.id)}** has quitted! What a n00b! :laughing:`)
   })
 
   // Process messages
@@ -63,6 +65,8 @@ export default function () {
       return
     }
 
+    let nick = getNick(msg.server, msg.author.id)
+
     // Logging
     if (loggableItemsWithAliases.indexOf(command) > -1 || (command === 'log' && args[0])) {
       let itemName = command === 'log' ? args[0] : command
@@ -73,30 +77,30 @@ export default function () {
         item: itemName, singular: itemName, plural: itemName
       }
 
-      Meteor.call('logs.register', msg.author.name, item.item, (error, data) => {
+      Meteor.call('logs.register', msg.author.id, item.item, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.sendMessage(msg, `${item.singular} #${data.today} todey for ${msg.author.mention()} loged (${data.total} ${item.plural} total for him)`)
+          bot.sendMessage(msg, `${item.singular} #${response.today} todey for ${nick} loged (${response.total} ${item.plural} total for him)`)
         }
       })
 
     // Profile registration command for those who joined server before bot started registering people
     } else if (command === 'register' || command === 'reg') {
-      Meteor.call('users.register', msg.author.name, (error, data) => {
+      Meteor.call('users.register', msg.author.id, (error, response) => {
         if (error) {
           console.error(`Error: ${error.reason}`)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          console.log(`Registered User "${msg.author.name}" (_id: ${data})`)
+          console.log(`Registered user "${nick}" (_id: ${response})`)
           bot.reply(msg, 'Registered successfully!')
         }
       })
 
-    // Setting lastfm username
-    } else if (command === 'set' && args[0] === 'lastfm' && args[1]) {
-      Meteor.call('users.set', msg.author.name, 'lastfm', args[1], (error, data) => {
+    // Set a user profile setting
+    } else if (command === 'set' && allowedProfileFields.indexOf(args[0]) > -1 && args[1]) {
+      Meteor.call('users.set', msg.author.id, args[0], args[1], (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -105,9 +109,20 @@ export default function () {
         }
       })
 
+    // Get a user profile setting
+    } else if (command === 'get' && allowedProfileFields.indexOf(args[0]) > -1) {
+      Meteor.call('users.get', msg.author.id, args[0], (error, response) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.reply(msg, `${response}`)
+        }
+      })
+
     // Request last played song from Last.fm
     } else if (command === 'lastfm' || command === 'lfm') {
-      if (args[0]) {
+      if (args[0]) { // Someone other than the user itself
         let params = {
           limit: 1,
           user: args[0]
@@ -115,14 +130,14 @@ export default function () {
         lfm.user.getRecentTracks(params, (error, recentTracks) => {
           if (error) {
             console.error(error)
-            bot.reply(msg, `Error: ${error.reason}`)
+            bot.reply(msg, `Error: ${error.reason || error.message}`)
           } else {
             let np = recentTracks.track[0]
-            bot.reply(msg, `**${args[0]}** np: *${np.artist['#text']}* - *${np.name}* :notes:`)
+            bot.sendMessage(msg, `**${args[0]}** np: *${np.artist['#text']}* - *${np.name}* :notes:`)
           }
         })
       } else {
-        Meteor.call('users.get', msg.author.name, 'lastfm', (error, response) => {
+        Meteor.call('users.get', msg.author.id, 'lastfm', (error, response) => {
           if (error) {
             console.error(error)
             bot.reply(msg, `Error: ${error.reason}`)
@@ -135,7 +150,7 @@ export default function () {
             lfm.user.getRecentTracks(params, (error, recentTracks) => {
               if (error) {
                 console.error(error)
-                bot.reply(msg, `Error: ${error.reason}`)
+                bot.reply(msg, `Error: ${error.reason || error.message}`)
               } else {
                 let np = recentTracks.track[0]
                 bot.reply(msg, `np: *${np.artist['#text']}* - *${np.name}* :notes:`)
@@ -146,13 +161,27 @@ export default function () {
       }
 
     // Display logging totals stats
-    } else if (command === 'today' || command === 'week' || command === 'month' || command === 'year' && args[0]) {
-      Meteor.call('logs.getStats', args[0], command, (error, data) => {
+    } else if (!_.isEmpty(_.pick(loggingStatsCommands, command)) && args[0]) {
+      let when = _.pick(loggingStatsCommands, command)[command]
+      let itemName = args[0]
+
+      if (loggableItemsWithAliases.indexOf(args[0]) > -1 || (command === 'log' && args[0])) {
+        let loggableIndex = _.findIndex(Loggables, (o) => {
+          return o.item === itemName || o.aliases.indexOf(itemName) > -1
+        })
+        if (loggableIndex > -1) itemName = Loggables[loggableIndex].item
+      }
+
+      Meteor.call('logs.getStats', itemName, when, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.sendMessage(msg, `**Top loggers of ${args[0]} ${command !== 'today' ? 'this' : ''} ${command}:**\n${data.top}\n*Total:* ${data.total}`)
+          let topMsg = response.top.reduce((prev, current, index) => {
+            console.log('current', current.discordId)
+            return `${prev}**${index + 1}.** ${getNick(msg.server, current.discordId)}[${current.logs}] `
+          }, '')
+          bot.sendMessage(msg, `**Top loggers of ${args[0]} ${when === 'day' ? command : 'this ' + command}:**\n${topMsg} **Total:** ${response.total}`)
         }
       })
     }
