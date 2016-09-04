@@ -1,5 +1,12 @@
 [
   {
+    "item": "420",
+    "singular": ":smoking:",
+    "plural": ":smoking:",
+    "aliases": ["jay", "joint", "spliff", "weed", "bowl", "blunt", "doobie"],
+    "category": "activity"
+  },
+  {
     "item": "apple",
     "singular": ":apple:",
     "plural": ":apple:",
@@ -112,10 +119,17 @@
     "category": "food"
   },
   {
+    "item": "mäfä",
+    "singular": ":mäfä",
+    "plural": "mäfäs",
+    "aliases": ["mafa"],
+    "category": "beverage"
+  },
+  {
     "item": "milk",
     "singular": ":milk:",
     "plural": ":milk:",
-    "aliases": [],
+    "aliases": ["melk"],
     "category": "beverage"
   },
   {

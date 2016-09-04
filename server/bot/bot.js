@@ -2,7 +2,8 @@ import {Meteor} from 'meteor/meteor'
 import Discord from 'discord.js'
 import _ from 'lodash'
 import LastfmAPI from 'lastfmapi'
-// import loggables from './loggables'
+import Loggables from './loggables'
+import Responses from './responses'
 
 export default function () {
   let bot = new Discord.Client()
@@ -14,6 +15,10 @@ export default function () {
     'secret': Meteor.settings.lastfm.secret
   })
 
+  let loggableItemsWithAliases = Loggables.reduce((prev, current) => {
+    return _.concat(prev, current.item, current.aliases)
+  }, []).sort()
+
   bot.on('ready', () => {
     console.log(`Ready in ${bot.channels.length} channels on ${bot.servers.length} servers, for a total of ${bot.users.length} users.`)
   })
@@ -21,7 +26,7 @@ export default function () {
   bot.on('serverNewMember', Meteor.bindEnvironment((server, user) => {
     console.log(`New User "${user.username}" has joined "${server.name}"`)
     bot.sendMessage(server.defaultChannel, `**${user.username}** has joined! Welcome :heart:`)
-    Meteor.call('users.register', user, (error, data) => {
+    Meteor.call('users.register', user.username, (error, data) => {
       if (error) {
         console.error(`Error: ${error.reason}`)
       } else {
@@ -35,22 +40,6 @@ export default function () {
     bot.sendMessage(server.defaultChannel, `**${user.username}** has quitted! What a n00b! :laughing:`)
   })
 
-  let loggables = ['bear', 'cofe', 'wine', 'vater', 'tea']
-
-  let simpleResponses = _.mapKeys({
-    'draw': 'http://isocyanide.xyz/draw',
-    'github': 'https://github.com/nodepowered/botman',
-    'loggables': loggables.join(', ')
-  }, (value, key) => {
-    return prefix + key
-  })
-
-  let functionResponses = {
-    'draw': function (arg) {
-      return 'http://isocyanide.xyz/draw/' + arg
-    }
-  }
-
   // Process messages
   bot.on('message', Meteor.bindEnvironment((msg) => {
     // Exit if msg is from a bot
@@ -59,82 +48,37 @@ export default function () {
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) return
 
-    // Check if it's a case of a simple response
-    if (simpleResponses[msg.content]) {
-      bot.sendMessage(msg, simpleResponses[msg.content])
-      return
-    }
-
     // Split arguments
     let args = msg.content.split(' ')
     let command = args[0].substring(1) // Command without prefix
+    args = _.drop(args)
 
-    // Is this a case of a function response?
-    if (functionResponses[command]) {
-      bot.sendMessage(msg, functionResponses[command](args[1]))
+    // Simple response cases
+    if (Responses[command]) {
+      if (typeof Responses[command] === 'string') {
+        bot.sendMessage(msg, Responses[command])
+      } else if (typeof Responses[command] === 'function') {
+        bot.sendMessage(msg, `${Responses[command](args)}`)
+      }
       return
     }
 
-    // Process logging shorthands
-    if (command === 'bear' || command === 'beer') {
-      Meteor.call('logs.register', msg.author.name, 'bear', (error, data) => {
-        if (error) {
-          console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
-        } else {
-          bot.sendMessage(msg, `:beer: #${data.today} todey for ${msg.author.mention()} putted (${data.total} :beers: total for him)`)
-        }
+    // Logging
+    if (loggableItemsWithAliases.indexOf(command) > -1 || (command === 'log' && args[0])) {
+      let itemName = command === 'log' ? args[0] : command
+      let loggableIndex = _.findIndex(Loggables, (o) => {
+        return o.item === itemName || o.aliases.indexOf(itemName) > -1
       })
-    } else if (command === 'cofe' || command === 'coffee' || command === 'gofe') {
-      Meteor.call('logs.register', msg.author.name, 'cofe', (error, data) => {
-        if (error) {
-          console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
-        } else {
-          bot.reply(msg, `:coffee: #${data.today} registered (${data.total} total :coffee: for him)`)
-        }
-      })
-    } else if (command === 'water' || command === 'vater') {
-      Meteor.call('logs.register', msg.author.name, 'water', (error, data) => {
-        if (error) {
-          console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
-        } else {
-          bot.reply(msg, `:potable_water: #${data.today} registered (${data.total} total :potable_water: for him)`)
-        }
-      })
-    } else if (command === 'wine') {
-      Meteor.call('logs.register', msg.author.name, 'wine', (error, data) => {
-        if (error) {
-          console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
-        } else {
-          bot.reply(msg, `:wine_glass: #${data.today} registered (${data.total} total :wine_glass: for him)`)
-        }
-      })
-    } else if (command === 'tea') {
-      Meteor.call('logs.register', msg.author.name, 'tea', (error, data) => {
-        if (error) {
-          console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
-        } else {
-          bot.reply(msg, `:tea: #${data.today} registered (${data.total} total :tea: for him)`)
-        }
-      })
+      let item = loggableIndex > -1 ? Loggables[loggableIndex] : {
+        item: itemName, singular: itemName, plural: itemName
+      }
 
-    // Are we logging something else?
-    } else if (command === 'log' && args[1]) {
-      let item = args[1]
-      // if (loggables.indexOf(item) === -1) {
-      //   bot.reply(msg, `Sorry, item not recognized.`)
-      //   return
-      // }
-      Meteor.call('logs.register', msg.author.name, item, (error, data) => {
+      Meteor.call('logs.register', msg.author.name, item.item, (error, data) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.reply(msg, `${item} #${data.today} registered (${data.total} total ${item} for him)`)
+          bot.sendMessage(msg, `${item.singular} #${data.today} todey for ${msg.author.mention()} loged (${data.total} ${item.plural} total for him)`)
         }
       })
 
@@ -151,8 +95,8 @@ export default function () {
       })
 
     // Setting lastfm username
-    } else if (command === 'set' && args[1] === 'lastfm' && args[2]) {
-      Meteor.call('users.set', msg.author.name, 'lastfm', args[2], (error, data) => {
+    } else if (command === 'set' && args[0] === 'lastfm' && args[1]) {
+      Meteor.call('users.set', msg.author.name, 'lastfm', args[1], (error, data) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -163,10 +107,10 @@ export default function () {
 
     // Request last played song from Last.fm
     } else if (command === 'lastfm' || command === 'lfm') {
-      if (args[1]) {
+      if (args[0]) {
         let params = {
           limit: 1,
-          user: args[1]
+          user: args[0]
         }
         lfm.user.getRecentTracks(params, (error, recentTracks) => {
           if (error) {
@@ -174,7 +118,7 @@ export default function () {
             bot.reply(msg, `Error: ${error.reason}`)
           } else {
             let np = recentTracks.track[0]
-            bot.reply(msg, `**${args[1]}** np: *${np.artist['#text']}* - *${np.name}* :notes:`)
+            bot.reply(msg, `**${args[0]}** np: *${np.artist['#text']}* - *${np.name}* :notes:`)
           }
         })
       } else {
@@ -202,13 +146,13 @@ export default function () {
       }
 
     // Display logging totals stats
-    } else if (command === 'today' || command === 'week' || command === 'month' || command === 'year' && args[1]) {
-      Meteor.call('logs.getStats', args[1], command, (error, data) => {
+    } else if (command === 'today' || command === 'week' || command === 'month' || command === 'year' && args[0]) {
+      Meteor.call('logs.getStats', args[0], command, (error, data) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.sendMessage(msg, `**Top loggers of ${args[1]} ${command !== 'today' ? 'this' : ''} ${command}:**\n${data.top}\n*Total:* ${data.total}`)
+          bot.sendMessage(msg, `**Top loggers of ${args[0]} ${command !== 'today' ? 'this' : ''} ${command}:**\n${data.top}\n*Total:* ${data.total}`)
         }
       })
     }
