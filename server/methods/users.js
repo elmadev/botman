@@ -2,8 +2,7 @@ import {Users, Logs} from '/lib/collections'
 import {Meteor} from 'meteor/meteor'
 import {check} from 'meteor/check'
 import moment from 'moment'
-import _ from 'lodash'
-import {allowedProfileFields, userIds} from '../bot/settings'
+import {allowedProfileFields} from '../bot/settings'
 
 export default function () {
   Meteor.methods({
@@ -70,29 +69,15 @@ export default function () {
       return count
     },
 
-    'users.fix' () {
-      Users.find().forEach((o) => {
-        if (!o.discordId || typeof o.discordId !== 'string') {
-          let userId = _.pick(userIds, o.username)[o.username].toString() || '140619555339763712'
-          let update = {
-            '$set': {
-              'discordId': userId,
-              'registeredAt': o.createdAt
-            },
-            '$unset': {
-              'username': '',
-              'createdAt': ''
-            }
-          }
+    'users.getGamers' (game) {
+      check(game, String)
 
-          Users.update({
-            _id: o._id
-          }, update)
-
-          console.log('Before: ', o)
-          console.log('After: ', Users.findOne(o._id))
-        }
+      let gamers = []
+      Users.find({'settings.games': {'$regex': '.*' + game + '.*'}}).forEach((o) => {
+        gamers.push(o.discordId)
       })
+
+      return gamers
     }
   })
 }

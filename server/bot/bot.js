@@ -4,6 +4,7 @@ import _ from 'lodash'
 import LastfmAPI from 'lastfmapi'
 import Responses from './responses'
 import Loggables from './loggables'
+import OtherGames from './othergames'
 import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers} from './settings'
 
 export default function () {
@@ -17,8 +18,13 @@ export default function () {
   })
 
   let getNick = (server, discordId) => {
-    let user = bot.users.get(discordId.toString())
-    return server.detailsOf(user).nick || user.username
+    console.log('gettink nick for: ', discordId)
+    let user = bot.users.get(discordId)
+    return server.detailsOf(user).nick || user ? user.username : discordId
+  }
+
+  let getMention = (discordId) => {
+    return bot.users.get(discordId).mention()
   }
 
   bot.on('ready', () => {
@@ -182,6 +188,26 @@ export default function () {
             return `${prev}**${index + 1}.** ${getNick(msg.server, current.discordId)}[${current.logs}] `
           }, '')
           bot.sendMessage(msg, `**Top loggers of ${args[0]} ${when === 'day' ? command : 'this ' + command}:**\n${topMsg} **Total:** ${response.total}`)
+        }
+      })
+
+    // Display gaming notifications
+    } else if (gameNotifiers.indexOf(command) > -1) {
+      let gameName = command
+      let gameIndex = _.findIndex(OtherGames, (o) => {
+        return o.item === gameName || o.aliases.indexOf(gameName) > -1
+      })
+      if (gameIndex > -1) gameName = OtherGames[gameIndex].command
+
+      Meteor.call('users.getGamers', gameName, (error, response) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          let mentions = response.top.reduce((prev, current, index) => {
+            return `${prev}${getMention(current)} `
+          }, '')
+          bot.sendMessage(msg, `Someone said ${prefix}${command} #${mentions}`)
         }
       })
     }

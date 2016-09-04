@@ -24,13 +24,9 @@ const loggingStatsCommands = {
   year: 'year'
 }
 
-const userIds = {
-}
-
 export {
   allowedProfileFields,
   gameNotifiers,
   loggableItemsWithAliases,
-  loggingStatsCommands,
-  userIds
+  loggingStatsCommands
 }

@@ -3,7 +3,6 @@ import {Meteor} from 'meteor/meteor'
 import {check} from 'meteor/check'
 import moment from 'moment'
 import _ from 'lodash'
-import {userIds} from '../bot/settings'
 
 export default function () {
   Meteor.methods({
@@ -66,31 +65,6 @@ export default function () {
         total: allLogs.length,
         top: top
       }
-    },
-
-    'logs.fix' () {
-      Logs.find().forEach((o) => {
-        if (!o.discordId || typeof o.discordId !== 'string') {
-          let userId = _.pick(userIds, o.username)[o.username].toString() || '140619555339763712'
-          let update = {
-            '$set': {
-              'discordId': userId,
-              'loggedAt': o.createdAt
-            },
-            '$unset': {
-              'username': '',
-              'createdAt': ''
-            }
-          }
-
-          Logs.update({
-            _id: o._id
-          }, update)
-
-          console.log('Before: ', o)
-          console.log('After: ', Logs.findOne(o._id))
-        }
-      })
     }
   })
 }
