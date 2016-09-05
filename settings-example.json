@@ -1,0 +1,18 @@
+{
+  "isDevelopment": true,
+  "isProduction": false,
+  "public": {
+  },
+  "private": {
+  },
+  "discord": {
+    "prefix": "!",
+  	"token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  	"clientID": "xxxxxxxxxxxxxxxxxx",
+  	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  },
+  "lastfm": {
+    "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  }
+}

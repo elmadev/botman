@@ -17,9 +17,13 @@ export default function () {
     'secret': Meteor.settings.lastfm.secret
   })
 
+  let getId = (server, nickname) => {
+
+  }
+
   let getNick = (server, discordId) => {
-    console.log('gettink nick for: ', discordId)
     let user = bot.users.get(discordId)
+    console.log('gettink nick for: ', discordId)
     return server.detailsOf(user).nick || user ? user.username : discordId
   }
 
@@ -117,7 +121,7 @@ export default function () {
 
     // Get a user profile setting
     } else if (command === 'get' && allowedProfileFields.indexOf(args[0]) > -1) {
-      Meteor.call('users.get', msg.author.id, args[0], (error, response) => {
+      Meteor.call('users.get', args[1] ? getId(msg.server, args[1]) : msg.author.id, args[0], (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -207,9 +211,13 @@ export default function () {
           let mentions = response.reduce((prev, current, index) => {
             return `${prev}${getMention(current)} `
           }, '')
-          bot.sendMessage(msg, `Someone said ${prefix}${command} ${mentions}`)
+          bot.sendMessage(msg, `Someone said ${command} ${mentions}`)
         }
       })
+
+    // Search and replace
+    } else if (command.startsWith('s/')) {
+      // wip
     }
   }))
 
