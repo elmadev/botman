@@ -9,7 +9,7 @@
     "prefix": "!",
   	"token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   	"clientID": "xxxxxxxxxxxxxxxxxx",
-  	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
   "lastfm": {
     "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
