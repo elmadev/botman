@@ -23,7 +23,7 @@ export default function () {
 
   let getNick = (server, discordId) => {
     let user = bot.users.get(discordId)
-    console.log('gettink nick for: ', discordId)
+    console.log('gettink nick for:', discordId)
     return server.detailsOf(user).nick || user ? user.username : discordId
   }
 
