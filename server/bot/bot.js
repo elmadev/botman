@@ -18,7 +18,14 @@ export default function () {
   })
 
   let getId = (server, nickname) => {
-    // wip
+    let id
+    _.forEach(server.members, (value) => {
+      let nick = server.detailsOf(value.id).nick
+      if (nick === nickname) {
+        id = value.id
+      }
+    })
+    return id || '404'
   }
 
   let getNick = (server, discordId) => {
@@ -53,6 +60,7 @@ export default function () {
 
   // Process messages
   bot.on('message', Meteor.bindEnvironment(msg => {
+    console.log(getId(msg.server, '8-ball'))
     // Exit if msg is from a bot
     if (msg.author.bot) return
 
