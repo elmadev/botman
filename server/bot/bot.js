@@ -18,13 +18,12 @@ export default function () {
   })
 
   let getId = (server, nickname) => {
-
+    // wip
   }
 
   let getNick = (server, discordId) => {
     let user = bot.users.get(discordId)
-    console.log('gettink nick for:', discordId)
-    return server.detailsOf(user).nick || user ? user.username : discordId
+    return server.detailsOf(user).nick || (user ? user.username : discordId)
   }
 
   let getMention = (discordId) => {
@@ -53,7 +52,7 @@ export default function () {
   })
 
   // Process messages
-  bot.on('message', Meteor.bindEnvironment((msg) => {
+  bot.on('message', Meteor.bindEnvironment(msg => {
     // Exit if msg is from a bot
     if (msg.author.bot) return
 
@@ -62,7 +61,7 @@ export default function () {
 
     // Split arguments
     let args = msg.content.split(' ')
-    let command = args[0].substring(1) // Command without prefix
+    let command = args[0].substring(1).toLowerCase() // Command without prefix
     args = _.drop(args)
 
     // Simple response cases
@@ -96,7 +95,7 @@ export default function () {
         }
       })
 
-    // Profile registration command for those who joined server before bot started registering people
+    // Profile registration command for those who joined server before bot started autoregistering people
     } else if (command === 'register' || command === 'reg') {
       Meteor.call('users.register', msg.author.id, (error, response) => {
         if (error) {

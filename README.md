@@ -61,6 +61,18 @@ Lets other players know you want to play Counter-Strike: Global Offensive
 - Stats website
 - Profile management in the website
 
+## Development starting guide:
+- Install Meteor
+  - Windows: https://install.meteor.com/windows
+  - Linux: `curl https://install.meteor.com/ | sh`
+- Fork the repo and git clone
+- Create own server in Discord for testing purposes
+- Rename `settings-example.json` to `settings-development.json` and add own bot token, api keys etc
+- `npm install` in the project's folder
+- Run locally with `npm start`
+
+(Someone add more details here about the process like commands and also Windows-specific problem solutions?)
+
 ## Contribution guidelines
 Let's try to keep it [JavaScript Standard Style](http://standardjs.com/) compliant. Project structure roughly follows [Mantra](https://github.com/kadirahq/mantra) suggestions.
 

@@ -3,7 +3,7 @@
     "item": "420",
     "singular": ":smoking:",
     "plural": ":smoking:",
-    "aliases": ["jay", "joint", "spliff", "weed", "bowl", "blunt", "doobie"],
+    "aliases": ["jay", "joint", "spliff", "weed", "bowl", "blunt", "doobie", "fatty"],
     "category": "activity"
   },
   {
@@ -67,6 +67,13 @@
     "singular": ":poultry_leg:",
     "plural": ":poultry_leg:",
     "aliases": ["chicken", "drumstick", "chikin", "drumstix"],
+    "category": "food"
+  },
+  {
+    "item": "chips",
+    "singular": "chips",
+    "plural": "chips",
+    "aliases": ["crisps", "sips"],
     "category": "food"
   },
   {
