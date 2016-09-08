@@ -60,7 +60,6 @@ export default function () {
 
   // Process messages
   bot.on('message', Meteor.bindEnvironment(msg => {
-    console.log(getId(msg.server, '8-ball'))
     // Exit if msg is from a bot
     if (msg.author.bot) return
 
