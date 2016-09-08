@@ -4,6 +4,7 @@ import methods from './methods'
 import bot from './bot'
 
 Meteor.startup(() => {
+  Future = Npm.require('fibers/future')
   bot()
 
   Meteor.setTimeout(function () {

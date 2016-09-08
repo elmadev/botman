@@ -13,6 +13,7 @@
     "lodash": "^4.15.0",
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.14.1",
+    "needle": "^1.1.2",
     "utf-8-validate": "^1.2.1"
   },
   "devDependencies": {

@@ -222,6 +222,27 @@ export default function () {
         }
       })
 
+    // IMDb search
+    } else if (command === 'imdb') {
+      if (args[0]) {
+        let searchTitle = args.join(' ')
+        Meteor.call('imdb.search', searchTitle, (error, response) => {
+          if (error) {
+            console.error(error)
+            bot.reply(msg, `Error: ${error.reason}`)
+          } else {
+            let title = response.Title
+            let year = response.Year
+            let rating = response.imdbRating
+            let url = 'http://www.imdb.com/title/' + response.imdbID
+            let type = response.Type === 'series' ? ':tv:' : ':movie_camera:'
+            bot.sendMessage(msg, `${type} ${title} :date: ${year} :star: ${rating}\n<${url}/>`, { file: response.Poster })
+          }
+        })
+      } else {
+        // help gak i guess duno
+      }
+
     // Search and replace
     } else if (command.startsWith('s/')) {
       // wip
