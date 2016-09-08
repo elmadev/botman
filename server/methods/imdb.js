@@ -4,26 +4,7 @@ export default function () {
   Meteor.methods({
     'imdb.search' (searchTitle) {
       check(searchTitle, String)
-      let url = 'http://www.omdbapi.com/?t=' + searchTitle + '&y=&plot=short&r=json'
-
-      // return new Promise((resolve, reject) => {
-      //   needle.request('get', url, (error, res, movies) => {
-      //     if (error) {
-      //       reject(error)
-      //     }
-      //
-      //     if (res.statusCode !== 200) {
-      //       reject('Statuscode ' + res.statusCode)
-      //     }
-      //
-      //     if (movies.Response === 'False') {
-      //       reject('No search results')
-      //     }
-      //     resolve(movies)
-      //   })
-      // })
-
-
+      let url = `http://www.omdbapi.com/?t=${searchTitle}&y=&plot=short&r=json`
       let fut = new Future();
 
       needle.get(url, (error, response, result) => {
@@ -37,8 +18,14 @@ export default function () {
           fut.throw(new Meteor.Error(500, 'No search results'))
         }
         else {
-          // return first title in result list
-          fut['return'](result)
+          let title = result.Title
+          let year = result.Year
+          let rating = result.imdbRating
+          let url = `http://www.imdb.com/title/${result.imdbID}/`
+          let type = result.Type === 'series' ? ':tv:' : ':movie_camera:'
+          let message = { message: `${type} ${title} :date: ${year} :star: ${rating}\n<${url}>`, file: result.Poster }
+
+          fut['return'](message)
         }
       })
 

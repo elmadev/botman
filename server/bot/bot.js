@@ -231,12 +231,7 @@ export default function () {
             console.error(error)
             bot.reply(msg, `Error: ${error.reason}`)
           } else {
-            let title = response.Title
-            let year = response.Year
-            let rating = response.imdbRating
-            let url = 'http://www.imdb.com/title/' + response.imdbID
-            let type = response.Type === 'series' ? ':tv:' : ':movie_camera:'
-            bot.sendMessage(msg, `${type} ${title} :date: ${year} :star: ${rating}\n<${url}/>`, { file: response.Poster })
+            bot.sendMessage(msg, response.message, { file: response.file })
           }
         })
       } else {
