@@ -6,14 +6,13 @@ import Responses from './responses'
 import Loggables from './loggables'
 import OtherGames from './othergames'
 import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers} from './settings'
-import http from 'http'
+import {Picker} from 'meteor/meteorhacks:picker'
 import createHandler from 'github-webhook-handler'
 
 export default function () {
   let bot = new Discord.Client()
   let settings = Meteor.settings.discord
   let prefix = settings.prefix
-  let githubChannel = Meteor.settings.github.channelId
 
   let lfm = new LastfmAPI({
     'api_key': Meteor.settings.lastfm.api_key,
@@ -22,13 +21,7 @@ export default function () {
 
   // Github webhook
   let handler = createHandler({ path: '/webhook-github', secret: Meteor.settings.github.secret })
-
-  http.createServer((req, res) => {
-    handler(req, res, function (err) {
-      res.statusCode = 404
-      res.end('no such location')
-    })
-  }).listen(7777)
+  let githubChannel = Meteor.settings.github.channelId
 
   handler.on('error', function (err) {
     console.error('Error:', err.message)
@@ -38,7 +31,6 @@ export default function () {
     bot.sendMessage(githubChannel, 'Received a push event for %s to %s',
       event.payload.repository.name,
       event.payload.ref)
-    console.log(event.payload)
   })
 
   handler.on('issues', function (event) {
@@ -47,7 +39,13 @@ export default function () {
       event.payload.action,
       event.payload.issue.number,
       event.payload.issue.title)
-    console.log(event.payload)
+  })
+
+  Picker.route('/webhook-github', function (params, req, res, next) {
+    handler(req, res, function (err) {
+      res.statusCode = 404
+      res.end('no such location')
+    })
   })
 
   let getId = (server, nickname) => {
