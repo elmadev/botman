@@ -7,9 +7,13 @@
   },
   "discord": {
     "prefix": "!",
-  	"token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  	"token": "bot xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   	"clientID": "xxxxxxxxxxxxxxxxxx",
   	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "github": {
+    "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "channelId": "xxxxxxxxxxxxxxxxxx"
   },
   "lastfm": {
     "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
