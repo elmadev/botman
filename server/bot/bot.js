@@ -9,20 +9,6 @@ import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, ga
 import http from 'http'
 import createHandler from 'github-webhook-handler'
 
-// Github webhook
-let handler = createHandler({ path: '/webhook-github', secret: Meteor.settings.github.secret })
-
-http.createServer((req, res) => {
-  handler(req, res, function (err) {
-    res.statusCode = 404
-    res.end('no such location')
-  })
-}).listen(7777)
-
-handler.on('error', function (err) {
-  console.error('Error:', err.message)
-})
-
 export default function () {
   let bot = new Discord.Client()
   let settings = Meteor.settings.discord
@@ -32,6 +18,20 @@ export default function () {
   let lfm = new LastfmAPI({
     'api_key': Meteor.settings.lastfm.api_key,
     'secret': Meteor.settings.lastfm.secret
+  })
+
+  // Github webhook
+  let handler = createHandler({ path: '/webhook-github', secret: Meteor.settings.github.secret })
+
+  http.createServer((req, res) => {
+    handler(req, res, function (err) {
+      res.statusCode = 404
+      res.end('no such location')
+    })
+  }).listen(7777)
+
+  handler.on('error', function (err) {
+    console.error('Error:', err.message)
   })
 
   handler.on('push', function (event) {
