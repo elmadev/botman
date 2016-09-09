@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "start": "meteor run --settings settings-development.json",
-    "deploy": "mup deploy --config=mup.js --settings=settings-production.json"
+    "deploy": "mup deploy --config=mup.js --settings=settings-production.json",
+    "ngrok": "./ngrok start -config ngrok.yml http"
   },
   "dependencies": {
     "bufferutil": "^1.2.1",

@@ -7,7 +7,7 @@
   },
   "discord": {
     "prefix": "!",
-  	"token": "bot xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  	"token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   	"clientID": "xxxxxxxxxxxxxxxxxx",
   	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
