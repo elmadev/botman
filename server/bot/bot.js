@@ -28,17 +28,13 @@ export default function () {
   })
 
   handler.on('push', function (event) {
-    bot.sendMessage(githubChannel, 'Received a push event for %s to %s',
-      event.payload.repository.name,
-      event.payload.ref)
-  })
-
-  handler.on('issues', function (event) {
-    bot.sendMessage(githubChannel, 'Received an issue event for %s action=%s: #%d %s',
-      event.payload.repository.name,
-      event.payload.action,
-      event.payload.issue.number,
-      event.payload.issue.title)
+    console.log('GitHub Push event payload:', event.payload)
+    let name = event.payload.pusher.name
+    let branch = event.payload.ref.substring(11)
+    let repo = event.payload.repository.full_name
+    let msg = event.payload.head_commit.message
+    let compare = event.payload.compare
+    bot.sendMessage(githubChannel, `**${name}** pushed a commit to \`${branch}\` in **${repo}**: *"${msg}"*. <${compare}>`)
   })
 
   Picker.route('/webhook-github', function (params, req, res, next) {
@@ -48,6 +44,7 @@ export default function () {
     })
   })
 
+  // Internal utility functions
   let getId = (server, nickname) => {
     let id
     _.forEach(server.members, (value) => {
