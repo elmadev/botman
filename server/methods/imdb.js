@@ -35,14 +35,40 @@ export default function () {
     },
 
     // imdb rating import
-    'imdb.import' (things) {
-    // TODO: get users url
-    // TODO: fetch rating list if set and valid imdb export url, msg if missing field
-    // TODO: send msg to wait ur horsie
-    // TODO: parse list into array (?)
-    // TODO: check if rating date newer if title already exist in rating db
-    // TODO: put into db or update old title ratings
-    // TODO: edit prev msg to output total ratings, and updated ratings added
+    'imdb.import' (user) {
+      check(user, String)
+
+      let fut = new Future();
+
+      // get users url
+      Meteor.call('users.get', user, 'imdb', (error, response) => {
+        if (error) {
+          fut.throw(new Meteor.Error(500, error))
+        } else {
+          // temporary regex thing TODO: remove when user.set has validation
+          let regex = /.*http:\/\/www\.imdb\.com\/user\/(ur\d{7})\/ratings.*/i
+          let result = response.match(regex);
+          if (!result) {
+            fut.throw(new Meteor.Error(500, `${response} is not a valid IMDb rating URL`))
+          } else {
+            let url = `http://www.imdb.com/list/export?list_id=ratings&author_id=${result[1]}`
+            fut['return'](url)
+
+
+            // TODO: send msg to wait ur horsie
+
+            // TODO: parse list into array (?)
+
+            // TODO: check if rating date newer if title already exist in rating db
+
+            // TODO: put into db or update old title ratings
+
+            // TODO: edit prev msg to output total ratings, and updated ratings added
+          }
+        }
+      })
+
+      return fut.wait()
     },
 
     // rating lists, optionally by year or genre

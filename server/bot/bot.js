@@ -262,8 +262,27 @@ export default function () {
           }
         })
       } else {
-        // help gak i guess duno
+        bot.reply(msg, 'Usage: !imdb <title to search>')
       }
+
+    // IMDb ratings import
+    } else if (command === 'imdbupdate') {
+      let searchTitle = args.join(' ')
+      Meteor.call('imdb.import', msg.author.id, (error, response) => {
+        // tell mans to calm down, delete message after 10s
+        bot.sendMessage(msg, 'Updating, hold your :horse:', (msgError, updateMsg) => {
+          setTimeout(() => {
+            bot.deleteMessage(updateMsg)
+          }, 10000);
+        })
+
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.sendMessage(msg, `<${response}>`)
+        }
+      })
 
     // Search and replace
     } else if (command.startsWith('s/')) {
