@@ -258,7 +258,6 @@ export default function () {
 
   //EOL Battle integration
   var battleChannel = '219858504876294144'; //elma server
-  battleChannel = '223851541939879948'; //test server
   setInterval(function(){
     Battle.checkQueue(function(ret){
       if(ret.type == 2){
