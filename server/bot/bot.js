@@ -8,6 +8,7 @@ import OtherGames from './othergames'
 import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers} from './settings'
 import {Picker} from 'meteor/meteorhacks:picker'
 import createHandler from 'github-webhook-handler'
+import Battle from './battle';
 
 export default function () {
   let bot = new Discord.Client()
@@ -254,6 +255,22 @@ export default function () {
       // wip
     }
   }))
+
+  //EOL Battle integration
+  var battleChannel = '219858504876294144'; //elma server
+  setInterval(function(){
+    Battle.checkQueue(function(ret){
+      if(ret.type == 2){
+        bot.sendMessage(battleChannel, ret.message);
+      }else if(ret.type == 1){
+        Battle.getResults(ret.message, function(ret){
+          if(ret != -1){
+            bot.sendMessage(battleChannel, ret);
+          }
+        });
+      }
+    });
+  }, 20 * 1000);
 
   // Handle errors and stuff
   bot.on('error', e => {
