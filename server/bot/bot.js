@@ -270,7 +270,7 @@ export default function () {
       let searchTitle = args.join(' ')
       Meteor.call('imdb.import', msg.author.id, (error, response) => {
         // tell mans to calm down, delete message after 10s
-        bot.sendMessage(msg, 'Updating, hold your :horse:', (msgError, updateMsg) => {
+        bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (msgError, updateMsg) => {
           setTimeout(() => {
             bot.deleteMessage(updateMsg)
           }, 10000);
@@ -280,7 +280,7 @@ export default function () {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.sendMessage(msg, `<${response}>`)
+          bot.sendMessage(msg, `${response.updated} ratings updated, ${response.total} total ratings`)
         }
       })
 

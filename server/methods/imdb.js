@@ -38,7 +38,7 @@ export default function () {
     'imdb.import' (user) {
       check(user, String)
 
-      let fut = new Future();
+      let fut = new Future()
 
       // get users url
       Meteor.call('users.get', user, 'imdb', (error, response) => {
@@ -52,10 +52,18 @@ export default function () {
             fut.throw(new Meteor.Error(500, `${response} is not a valid IMDb rating URL`))
           } else {
             let url = `http://www.imdb.com/list/export?list_id=ratings&author_id=${result[1]}`
-            fut['return'](url)
 
-
-            // TODO: send msg to wait ur horsie
+            // fetch rating list
+            needle.get(url, (error, response, result) => {
+              if (error) {
+                fut.throw(new Meteor.Error(500, error))
+              } else if (response.statusCode !== 200) {
+                console.log(response)
+                fut.throw(new Meteor.Error(500, 'Statuscode ' + response.statusCode))
+              } else {
+                fut['return'](result)
+              }
+            })
 
             // TODO: parse list into array (?)
 
@@ -63,7 +71,7 @@ export default function () {
 
             // TODO: put into db or update old title ratings
 
-            // TODO: edit prev msg to output total ratings, and updated ratings added
+            // TODO: msg total ratings imported, and updated ratings added
           }
         }
       })

@@ -18,5 +18,9 @@
   "lastfm": {
     "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "imdb": {
+    "user": "xxxxxx...",
+    "password": "xxxxxx..."
   }
 }
