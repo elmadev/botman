@@ -21,5 +21,13 @@
   },
   "devDependencies": {
     "standard": "^8.0.0"
+  },
+  "standard": {
+    "globals": [
+      "Meteor",
+      "Future",
+      "_",
+      "check"
+    ]
   }
 }
