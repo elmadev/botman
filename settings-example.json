@@ -20,7 +20,6 @@
     "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
   "imdb": {
-    "user": "xxxxxx...",
-    "password": "xxxxxx..."
+    "cookie": "xxxxxx..."
   }
 }

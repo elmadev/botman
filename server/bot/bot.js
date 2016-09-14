@@ -267,20 +267,19 @@ export default function () {
 
     // IMDb ratings import
     } else if (command === 'imdbupdate') {
-      let searchTitle = args.join(' ')
-      Meteor.call('imdb.import', msg.author.id, (error, response) => {
-        // tell mans to calm down, delete message after 10s
-        bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (msgError, updateMsg) => {
-          setTimeout(() => {
-            bot.deleteMessage(updateMsg)
-          }, 10000);
-        })
+      // tell mans to calm down, delete message after 10s
+      bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (error, updateMsg) => {
+        setTimeout(() => {
+          bot.deleteMessage(updateMsg)
+        }, 10000);
+      })
 
+      Meteor.call('imdb.import', msg.author.id, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
-          bot.sendMessage(msg, `${response.updated} ratings updated, ${response.total} total ratings`)
+          bot.reply(msg, `Updated ${response.updated} ratings, ${response.total} total ratings`)
         }
       })
 
