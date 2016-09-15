@@ -1,13 +1,26 @@
-import {Meteor} from 'meteor/meteor'
+import { Meteor } from 'meteor/meteor'
 import Discord from 'discord.js'
 import _ from 'lodash'
 import LastfmAPI from 'lastfmapi'
 import Responses from './responses'
 import Loggables from './loggables'
 import OtherGames from './othergames'
-import {allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers} from './settings'
-import {Picker} from 'meteor/meteorhacks:picker'
+import { allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers } from './settings'
+import { Picker } from 'meteor/meteorhacks:picker'
 import createHandler from 'github-webhook-handler'
+import Battle from './battle'
+
+// Functions
+import { getGamers } from '../../../api/users/server/get-gamers.js'
+import { getUserField } from '../../../api/users/server/get-user-field.js'
+import { registerUser } from '../../../api/users/server/register-user.js'
+import { setUserField } from '../../../api/users/server/set-user-field.js'
+import { getLogsStats } from '../../../api/logs/server/get-logs-stats.js'
+import { registerLogs } from '../../../api/logs/server/register-logs.js'
+import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js'
+import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
+import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
+
 
 export default function () {
   let bot = new Discord.Client()
@@ -72,7 +85,7 @@ export default function () {
   bot.on('serverNewMember', Meteor.bindEnvironment((server, user) => {
     console.log(`New User "${user.username}" (id: ${user.id}) has joined "${server.name}"`)
     bot.sendMessage(server.defaultChannel, `**${getNick(server, user.id)}** has joined! Welcome :heart:`)
-    Meteor.call('users.register', user.id, (error, response) => {
+    registerUser(user.id, (error, response) => {
       if (error) {
         console.error(`Error: ${error.reason}`)
       } else {
@@ -92,7 +105,10 @@ export default function () {
     if (msg.author.bot) return
 
     // Exit if msg doesn't start with prefix
-    if (!msg.content.startsWith(prefix)) return
+    if (!msg.content.startsWith(prefix)) {
+      registerChatlog(msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      return
+    }
 
     // Split arguments
     let args = msg.content.split(' ')
@@ -121,7 +137,7 @@ export default function () {
         item: itemName, singular: itemName, plural: itemName
       }
 
-      Meteor.call('logs.register', msg.author.id, item.item, (error, response) => {
+      registerLogs(msg.author.id, item.item, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -132,22 +148,21 @@ export default function () {
 
     // Profile registration command for those who joined server before bot started autoregistering people
     } else if (command === 'register' || command === 'reg') {
-      Meteor.call('users.register', msg.author.id, (error, response) => {
+      registerUser(msg.author.id, (error, response) => {
         if (error) {
-          console.error(`Error: ${error.reason}`)
-          bot.reply(msg, `Error: ${error.reason}`)
+          console.error(`Error: ${error}`)
+          bot.reply(msg, `Error: ${error}`)
         } else {
-          console.log(`Registered user "${nick}" (_id: ${response})`)
           bot.reply(msg, 'Registered successfully!')
         }
       })
 
     // Set a user profile setting
     } else if (command === 'set' && allowedProfileFields.indexOf(args[0]) > -1 && args[1]) {
-      Meteor.call('users.set', msg.author.id, args[0], _.drop(args), (error, response) => {
+      setUserField(msg.author.id, args[0], _.drop(args), (error, response) => {
         if (error) {
           console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
+          bot.reply(msg, `Error: ${error}`)
         } else {
           bot.reply(msg, 'Setting set!')
         }
@@ -155,10 +170,10 @@ export default function () {
 
     // Get a user profile setting
     } else if (command === 'get' && allowedProfileFields.indexOf(args[0]) > -1) {
-      Meteor.call('users.get', args[1] ? getId(msg.server, args[1]) : msg.author.id, args[0], (error, response) => {
+      getUserField(args[1] ? getId(msg.server, args[1]) : msg.author.id, args[0], (error, response) => {
         if (error) {
           console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
+          bot.reply(msg, `Error: ${error}`)
         } else {
           bot.reply(msg, `${response}`)
         }
@@ -181,10 +196,10 @@ export default function () {
           }
         })
       } else {
-        Meteor.call('users.get', msg.author.id, 'lastfm', (error, response) => {
+        getUserField(msg.author.id, 'lastfm', (error, response) => {
           if (error) {
             console.error(error)
-            bot.reply(msg, `Error: ${error.reason}`)
+            bot.reply(msg, `Error: ${error}`)
           } else {
             // Proceed to query Last.fm API
             let params = {
@@ -216,7 +231,7 @@ export default function () {
         if (loggableIndex > -1) itemName = Loggables[loggableIndex].item
       }
 
-      Meteor.call('logs.getStats', itemName, when, (error, response) => {
+      getLogsStats(itemName, when, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -237,7 +252,7 @@ export default function () {
       })
       if (gameIndex > -1) gameName = OtherGames[gameIndex].command
 
-      Meteor.call('users.getGamers', gameName, (error, response) => {
+      getGamers(gameName, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -253,7 +268,7 @@ export default function () {
     } else if (command === 'imdb') {
       if (args[0]) {
         let searchTitle = args.join(' ')
-        Meteor.call('imdb.search', searchTitle, (error, response) => {
+        imdbSearch(searchTitle, (error, response) => {
           if (error) {
             console.error(error)
             bot.reply(msg, `Error: ${error.reason}`)
@@ -274,7 +289,7 @@ export default function () {
         }, 10000)
       })
 
-      Meteor.call('imdb.import', msg.author.id, (error, response) => {
+      imdbUpdate(msg.author.id, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error.reason}`)
@@ -288,6 +303,22 @@ export default function () {
       // wip
     }
   }))
+
+  // EOL Battle integration
+  let battleChannel = '219858504876294144'
+  setInterval(() => {
+    Battle.checkQueue(ret => {
+      if (ret.type === 2) {
+        bot.sendMessage(battleChannel, ret.message)
+      } else if (ret.type === 1) {
+        Battle.getResults(ret.message, (ret) => {
+          if (ret !== -1) {
+            bot.sendMessage(battleChannel, ret)
+          }
+        })
+      }
+    })
+  }, 20 * 1000)
 
   // Handle errors and stuff
   bot.on('error', e => {

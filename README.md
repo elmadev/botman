@@ -71,6 +71,10 @@ Lets other players know you want to play Counter-Strike: Global Offensive
 - `npm install` in the project's folder
 - Run locally with `npm start`
 
+### Windows issues
+- You need python installed, version 2.x from https://www.python.org/downloads/
+- You need some VS build tools, you can go through these instructions: https://github.com/nodejs/node-gyp (Option 1 worked for me)
+
 (Someone add more details here about the process like commands and also Windows-specific problem solutions?)
 
 ## Contribution guidelines
