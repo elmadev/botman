@@ -93,7 +93,10 @@ export default function () {
     if (msg.author.bot) return
 
     // Exit if msg doesn't start with prefix
-    if (!msg.content.startsWith(prefix)) return
+    if (!msg.content.startsWith(prefix)) {
+      Meteor.call('chatlog.register', msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      return
+    }
 
     // Split arguments
     let args = msg.content.split(' ')

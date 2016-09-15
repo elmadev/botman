@@ -26,6 +26,7 @@ themeteorchef:bert
 aldeed:collection2
 msavin:mongol
 meteorhacks:picker
+twbs:bootstrap
 
 # insecure # Uncomment these 2 if want to observe all local Mongo data in Mongol
 # autopublish
