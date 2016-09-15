@@ -1,5 +1,5 @@
 import { composeWithTracker } from 'react-komposer'
-import { ChatLog } from '../../../lib/collections.js'
+import { ChatLog } from '../../api/chatlog/chatlog.js'
 import { ChatLogGrid } from '../components/chatlog-grid.js'
 import { Loading } from '../components/loading.js'
 import { Meteor } from 'meteor/meteor'

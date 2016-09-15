@@ -41,6 +41,7 @@ jquery@1.11.9
 launch-screen@1.0.12
 livedata@1.0.18
 logging@1.1.15
+mdg:validated-method@1.1.0
 mdg:validation-error@0.2.0
 meteor@1.2.17
 meteor-base@1.0.4
