@@ -271,7 +271,7 @@ export default function () {
       bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (error, updateMsg) => {
         setTimeout(() => {
           bot.deleteMessage(updateMsg)
-        }, 10000);
+        }, 10000)
       })
 
       Meteor.call('imdb.import', msg.author.id, (error, response) => {
