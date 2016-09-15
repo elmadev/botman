@@ -41,6 +41,7 @@ jquery@1.11.9
 launch-screen@1.0.12
 livedata@1.0.18
 logging@1.1.15
+mdg:validated-method@1.1.0
 mdg:validation-error@0.2.0
 meteor@1.2.17
 meteor-base@1.0.4
@@ -78,6 +79,7 @@ templating@1.1.14
 templating-tools@1.0.4
 themeteorchef:bert@2.1.1
 tracker@1.1.0
+twbs:bootstrap@3.3.6
 ui@1.0.11
 underscore@1.0.9
 url@1.0.10
