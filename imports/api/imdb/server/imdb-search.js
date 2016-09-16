@@ -1,19 +1,17 @@
-import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
 import needle from 'needle'
 
 export const imdbSearch = (searchTitle, callback) => {
   check(searchTitle, String)
   let url = `http://www.omdbapi.com/?t=${searchTitle}&y=&plot=short&r=json`
-  let fut = new Future()
 
   needle.get(url, (error, response, result) => {
     if (error) {
-      fut.throw(new Meteor.Error(500, error))
+      callback(error)
     } else if (response.statusCode !== 200) {
-      fut.throw(new Meteor.Error(500, 'Statuscode ' + response.statusCode))
+      callback('Statuscode ' + response.statusCode)
     } else if (result.Response === 'False') {
-      fut.throw(new Meteor.Error(500, 'No search results'))
+      callback('No search results')
     } else {
       let title = result.Title
       let year = result.Year
@@ -23,9 +21,7 @@ export const imdbSearch = (searchTitle, callback) => {
       // TODO: fetch server users avg rating
       let message = { message: `${type} ${title} :date: ${year} :star: ${rating}\n<${url}>`, file: result.Poster }
 
-      fut['return'](message)
+      callback(null, message)
     }
   })
-
-  callback(null, fut.wait())
 }
