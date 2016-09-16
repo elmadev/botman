@@ -272,9 +272,9 @@ export default function () {
         imdbSearch(searchTitle, (error, response) => {
           if (error) {
             console.error(error)
-            bot.reply(msg, `Error: ${error.reason}`)
+            bot.reply(msg, `Error: ${error}`)
           } else {
-            bot.sendMessage(msg, response.message, { file: response.file })
+            bot.sendMessage(msg, response.message, response.file ? { file: response.file } : {})
           }
         })
       } else {
@@ -293,7 +293,7 @@ export default function () {
       imdbUpdate(msg.author.id, (error, response) => {
         if (error) {
           console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
+          bot.reply(msg, `Error: ${error}`)
         } else {
           bot.reply(msg, `Updated ${response.updated} ratings, ${response.total} total ratings`)
         }
