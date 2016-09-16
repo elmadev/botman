@@ -81,7 +81,7 @@ Lets other players know you want to play Counter-Strike: Global Offensive
 - You need some VS build tools, you can go through these instructions: https://github.com/nodejs/node-gyp (Option 1 worked for me)
 
 ## Contribution guidelines
-Must keep code [JavaScript Standard Style](http://standardjs.com/) compliant. Project structure roughly follows that suggested by [Base](https://github.com/themeteorchef/base)
+Must keep code [JavaScript Standard Style](http://standardjs.com/) compliant (run `standard` in the project directory to make sure it is). Project structure roughly follows that suggested by [Base](https://github.com/themeteorchef/base)
 
 Separation of concerns:
 - Put various settings, simple response lists and helper functions in separate files whenever possible and import them where needed, to improve readability in the main bot file (`bot.js`)
