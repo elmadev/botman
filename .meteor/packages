@@ -31,3 +31,4 @@ twbs:bootstrap
 # insecure # Uncomment these 2 if want to observe all local Mongo data in Mongol
 # autopublish
 mdg:validated-method
+meteorhacks:aggregate

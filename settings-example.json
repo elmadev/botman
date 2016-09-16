@@ -18,5 +18,8 @@
   "lastfm": {
     "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "imdb": {
+    "cookie": "xxxxxx..."
   }
 }

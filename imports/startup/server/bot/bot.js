@@ -18,6 +18,9 @@ import { setUserField } from '../../../api/users/server/set-user-field.js'
 import { getLogsStats } from '../../../api/logs/server/get-logs-stats.js'
 import { registerLogs } from '../../../api/logs/server/register-logs.js'
 import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js'
+import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
+import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
+import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
 
 
 export default function () {
@@ -259,6 +262,51 @@ export default function () {
             return `${prev}${getMention(current)} `
           }, '')
           bot.sendMessage(msg, `Someone said ${command} ${mentions}`)
+        }
+      })
+
+    // IMDb search
+    } else if (command === 'imdb') {
+      if (args[0]) {
+        let searchTitle = args.join(' ')
+        imdbSearch(searchTitle, (error, response) => {
+          if (error) {
+            console.error(error)
+            bot.reply(msg, `Error: ${error.reason}`)
+          } else {
+            bot.sendMessage(msg, response.message, { file: response.file })
+          }
+        })
+      } else {
+        bot.reply(msg, 'Usage: !imdb <title to search>')
+      }
+
+    // IMDb ratings import
+    } else if (command === 'imdbupdate') {
+      // tell mans to calm down, delete message after 10s
+      bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (error, updateMsg) => {
+        setTimeout(() => {
+          bot.deleteMessage(updateMsg)
+        }, 10000)
+      })
+
+      imdbUpdate(msg.author.id, (error, response) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.reply(msg, `Updated ${response.updated} ratings, ${response.total} total ratings`)
+        }
+      })
+
+    // IMDb top lists
+    } else if (command === 'imdbtop') {
+      imdbTop(10, (error, response) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error}`)
+        } else {
+          bot.sendMessage(msg, response)
         }
       })
 

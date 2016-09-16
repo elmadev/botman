@@ -19,6 +19,9 @@ const RatingsSchema = new SimpleSchema({
   discordId: {
     type: String
   },
+  date: {
+    type: Date
+  },
   rating: {
     type: Number
   }
@@ -26,6 +29,9 @@ const RatingsSchema = new SimpleSchema({
 
 Imdb.schema = new SimpleSchema({
   imdbId: {
+    type: String
+  },
+  title: {
     type: String
   },
   year: {
