@@ -20,6 +20,7 @@ import { registerLogs } from '../../../api/logs/server/register-logs.js'
 import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js'
 import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
+import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
 
 
 export default function () {
@@ -295,6 +296,17 @@ export default function () {
           bot.reply(msg, `Error: ${error.reason}`)
         } else {
           bot.reply(msg, `Updated ${response.updated} ratings, ${response.total} total ratings`)
+        }
+      })
+
+    // IMDb top lists
+    } else if (command === 'imdbtop') {
+      imdbTop({ minVotes: 2, limit: 10 }, (error, response) => {
+        if (error) {
+          console.error(error)
+          bot.reply(msg, `Error: ${error.reason}`)
+        } else {
+          bot.reply(msg, response)
         }
       })
 
