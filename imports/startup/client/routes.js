@@ -8,10 +8,10 @@ import { ChatLog } from '../../ui/pages/chatlog'
 
 Meteor.startup(() => {
   render(
-    <Router history={ browserHistory }>
-      <Route path='/' component={ App }>
-        <IndexRoute name='index' component={ Index } />
-        <Route name='chatlog' path='/chatlog' component={ ChatLog } />
+    <Router history={browserHistory}>
+      <Route path='/' component={App}>
+        <IndexRoute name='index' component={Index} />
+        <Route name='chatlog' path='/chatlog' component={ChatLog} />
       </Route>
     </Router>,
     document.getElementById('react-root')

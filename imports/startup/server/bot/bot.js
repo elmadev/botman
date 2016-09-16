@@ -53,6 +53,7 @@ export default function () {
 
   Picker.route('/webhook-github', function (params, req, res, next) {
     handler(req, res, function (err) {
+      if (err) {}
       res.statusCode = 404
       res.end('no such location')
     })
@@ -285,6 +286,7 @@ export default function () {
     } else if (command === 'imdbupdate') {
       // tell mans to calm down, delete message after 10s
       bot.sendMessage(msg, 'Updating, hold your :horse:, may take up to a minute', (error, updateMsg) => {
+        if (error) {}
         setTimeout(() => {
           bot.deleteMessage(updateMsg)
         }, 10000)
@@ -317,7 +319,7 @@ export default function () {
   }))
 
   // EOL Battle integration
-  let battleChannel = '219858504876294144'
+  let battleChannel = Meteor.settings.eol.channelId
   setInterval(() => {
     Battle.checkQueue(ret => {
       if (ret.type === 2) {

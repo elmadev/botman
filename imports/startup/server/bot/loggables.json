@@ -148,9 +148,9 @@
   },
   {
     "item": "mäfä",
-    "singular": ":mäfä",
+    "singular": "mäfä",
     "plural": "mäfäs",
-    "aliases": ["mafa"],
+    "aliases": ["mafa", "redbull", "energy", "monster", "burn"],
     "category": "beverage"
   },
   {

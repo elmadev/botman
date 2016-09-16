@@ -1,23 +1,22 @@
 import React from 'react'
-import Griddle from 'griddle-react'
 import { BootstrapPager, GriddleBootstrap } from 'griddle-react-bootstrap'
 
 class ChannelDisplay extends React.Component {
-  render() {
+  render () {
     let channel = '#' + this.props.data
     return (<span>{channel}</span>)
   }
 }
 
 class DateDisplay extends React.Component {
-  render() {
+  render () {
     let date = this.props.data.toLocaleString()
     return (<span>{date}</span>)
   }
 }
 
 export class ChatLogGrid extends React.Component {
-  render() {
+  render () {
     let columnMetadata = [
       {
         columnName: 'channel',
@@ -46,17 +45,17 @@ export class ChatLogGrid extends React.Component {
     return (
       <GriddleBootstrap
         results={this.props.chatlog}
-        showFilter={true}
-        showSettings={true}
+        showFilter
+        showSettings
         columns={['channel', 'nick', 'message', 'timestamp']}
         columnMetadata={columnMetadata}
         customPagerComponent={BootstrapPager}
-        bordered={true}
-        striped={true}
-        hover={true}
+        bordered
+        striped
+        hover
         pagerOptions={{ maxButtons: 7 }}
         resultsPerPage={100}
-        condensed={true}
+        condensed
         initialSort={'timestamp'}
       />
     )

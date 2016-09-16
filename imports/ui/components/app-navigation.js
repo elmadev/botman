@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { LinkContainer } from 'react-router-bootstrap'
 
 export class AppNavigation extends React.Component {
-  render() {
+  render () {
     return <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
@@ -15,7 +15,7 @@ export class AppNavigation extends React.Component {
       <Navbar.Collapse>
         <Nav>
           <LinkContainer to='chatlog'>
-            <NavItem eventKey={ 1 } href='/chatlog'>Discord Chat Logs</NavItem>
+            <NavItem eventKey={1} href='/chatlog'>Discord Chat Logs</NavItem>
           </LinkContainer>
         </Nav>
       </Navbar.Collapse>

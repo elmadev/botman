@@ -4,7 +4,7 @@ import ChatLogGrid from '../containers/chatlog-grid.js'
 
 export const ChatLog = () => (
   <Row>
-    <Col xs={ 12 }>
+    <Col xs={12}>
       <h4 className='page-header'>Discord Chat Log</h4>
       <ChatLogGrid />
     </Col>
