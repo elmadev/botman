@@ -301,12 +301,12 @@ export default function () {
 
     // IMDb top lists
     } else if (command === 'imdbtop') {
-      imdbTop({ minVotes: 2, limit: 10 }, (error, response) => {
+      imdbTop(10, (error, response) => {
         if (error) {
           console.error(error)
-          bot.reply(msg, `Error: ${error.reason}`)
+          bot.reply(msg, `Error: ${error}`)
         } else {
-          bot.reply(msg, response)
+          bot.sendMessage(msg, response)
         }
       })
 
