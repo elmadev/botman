@@ -31,6 +31,12 @@ Shows the link to the Trello board, optionally making it an invite link
 ###`!playlist`
 Shows the link to the Google Spreadsheet containing links to songs for the Music Bot's autoplaylist
 
+###`!imdb <title>`
+Lookup a title on imdb.com
+
+###`!imdbimport`
+Import your imdb ratings (must have set link to vote list with `!set imdb <link>` first)
+
 ###`!set <setting> <value>`
 Set or update a profile setting such as:
 - `eol`: EOL nickname
@@ -56,7 +62,6 @@ Lets other players know you want to play Rocket League
 Lets other players know you want to play Counter-Strike: Global Offensive
 
 ## Coming soon
-- EOL battle notifications and posting of results
 - EOL chat feed in Discord and messaging from Discord to EOL chat
 - Stats website
 - Profile management in the website
@@ -65,21 +70,18 @@ Lets other players know you want to play Counter-Strike: Global Offensive
 - Install Meteor
   - Windows: https://install.meteor.com/windows
   - Linux: `curl https://install.meteor.com/ | sh`
-- Fork the repo and git clone
+- git clone this repo
 - Create own server in Discord for testing purposes
 - Rename `settings-example.json` to `settings-development.json` and add own bot token, api keys etc
 - `npm install` in the project's folder
-- Run locally with `npm start`
+- Run locally with `meteor npm start`
 
 ### Windows issues
 - You need python installed, version 2.x from https://www.python.org/downloads/
 - You need some VS build tools, you can go through these instructions: https://github.com/nodejs/node-gyp (Option 1 worked for me)
 
-(Someone add more details here about the process like commands and also Windows-specific problem solutions?)
-
 ## Contribution guidelines
-Let's try to keep it [JavaScript Standard Style](http://standardjs.com/) compliant. Project structure roughly follows [Mantra](https://github.com/kadirahq/mantra) suggestions.
+Must keep code [JavaScript Standard Style](http://standardjs.com/) compliant. Project structure roughly follows that suggested by [Base](https://github.com/themeteorchef/base)
 
 Separation of concerns:
 - Put various settings, simple response lists and helper functions in separate files whenever possible and import them where needed, to improve readability in the main bot file (`bot.js`)
-- Let `Meteor.methods` deal with all database operations
