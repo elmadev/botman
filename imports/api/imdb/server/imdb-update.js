@@ -12,13 +12,13 @@ export const imdbUpdate = (user, callback) => {
   // get users url
   getUserField(user, 'imdb', (error, response) => {
     if (error) {
-      callback(error)
+      return callback(error)
     } else {
       // temporary regex thing TODO: remove when user.set has validation
       let regex = /.*http:\/\/www\.imdb\.com\/user\/(ur\d{1,10})\/ratings.*/i
       let result = response.match(regex)
       if (!result) {
-        callback(`<${response}> is not a valid IMDb rating URL`)
+        return callback(`<${response}> is not a valid IMDb rating URL`)
       } else {
         let url = `http://akas.imdb.com/list/export?list_id=ratings&author_id=${result[1]}`
         let settings = {
@@ -31,9 +31,9 @@ export const imdbUpdate = (user, callback) => {
         // fetch rating list
         needle.get(url, settings, Meteor.bindEnvironment((error, response, result) => {
           if (error) {
-            callback(error)
+            return callback(error)
           } else if (response.statusCode !== 200) {
-            callback('Statuscode ' + response.statusCode)
+            return callback('Statuscode ' + response.statusCode)
           } else {
             // trim excess whitespace creating an extra line in export file,
             // then split and remove first element (csv field descriptions)
@@ -77,7 +77,7 @@ export const imdbUpdate = (user, callback) => {
               }
             })
 
-            callback(null, { updated: count, total: tmp.length })
+            return callback(null, { updated: count, total: tmp.length })
           }
         }))
       }

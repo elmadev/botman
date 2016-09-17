@@ -9,11 +9,11 @@ export const imdbSearch = (searchTitle, callback) => {
 
   needle.get(url, Meteor.bindEnvironment((error, response, result) => {
     if (error) {
-      callback(error)
+      return callback(error)
     } else if (response.statusCode !== 200) {
-      callback('Statuscode ' + response.statusCode)
+      return callback('Statuscode ' + response.statusCode)
     } else if (result.Response === 'False') {
-      callback('No search results')
+      return callback('No search results')
     } else {
       let title = result.Title
       let year = result.Year
@@ -45,14 +45,14 @@ export const imdbSearch = (searchTitle, callback) => {
 
       let userRating = ''
       if (lookup.length > 0) {
-        userRating += ` :star2: ${lookup[0].rating} by ${lookup[0].count} user${lookup[0].count > 1 ? 's' : ''}`
+        userRating += ` :star2: ${Math.round(lookup[0].rating * 10) / 10} by ${lookup[0].count} user${lookup[0].count > 1 ? 's' : ''}`
       }
 
       let message = { message: `${type} ${title} :date: ${year} :star: ${rating}${userRating}\n<${url}>` }
       if (result.Poster !== 'N/A') {
         message.file = result.Poster
       }
-      callback(null, message)
+      return callback(null, message)
     }
   }))
 }

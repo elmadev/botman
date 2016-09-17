@@ -21,13 +21,18 @@ export const imdbTop = (limit, callback) => {
   ])
 
   if (result.length < 1) {
-    callback('Not enough ratings found')
+    return callback('Not enough ratings found')
   } else {
     let msg = `**Top${limit} IMDb list as rated by server users**\n`
     for (let i = 1, j = result.length; i <= j; i++) {
-      msg = `${msg}${i}. ${result[i - 1].title} (${result[i - 1].year}) :star: ${result[i - 1].rating} by ${result[i - 1].count} users <http://imdb.com/title/${result[i - 1].imdbId}>\n`
+      let title = result[i - 1].title
+      let year = result[i - 1].year
+      let userRating = Math.round(result[i - 1].rating * 10) / 10
+      let userCount = result[i - 1].count
+      let imdbId = result[i - 1].imdbId
+      msg = `${msg}${i}. ${title} (${year}) :star: ${userRating} by ${userCount} users <http://imdb.com/title/${imdbId}>\n`
     }
 
-    callback(null, msg)
+    return callback(null, msg)
   }
 }
