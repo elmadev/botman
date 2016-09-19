@@ -34,8 +34,11 @@ Shows the link to the Google Spreadsheet containing links to songs for the Music
 ###`!imdb <title>`
 Lookup a title on imdb.com
 
-###`!imdbimport`
+###`!imdbupdate`
 Import your imdb ratings (must have set link to vote list with `!set imdb <link>` first)
+
+###`!imdbtop [series | game]`
+List servers top10 rated titles, with movies selected by default.
 
 ###`!set <setting> <value>`
 Set or update a profile setting such as:
