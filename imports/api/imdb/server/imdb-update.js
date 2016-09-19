@@ -46,6 +46,18 @@ export const imdbUpdate = (user, callback) => {
               line = line.split('","') // don't need edge fields, split this way to remove substring() steps
               let date = moment(line[2] + '+0000', 'ddd MMM D HH:mm:ss YYYY Z').toDate()
               let rating = { discordId: user, date: date, rating: Number(line[8]) }
+              let titleType
+              switch (line[6].toLowerCase()) {
+                case 'mini-series':
+                case 'tv series':
+                  titleType = 'series'
+                  break
+                case 'video game':
+                  titleType = 'game'
+                  break
+                default:
+                  titleType = 'movie'
+              }
 
               let titleDoc = Imdb.findOne({ imdbId: line[1] }, { _id: 1, ratings: 1 })
               // does title exist?
@@ -69,8 +81,11 @@ export const imdbUpdate = (user, callback) => {
                 Imdb.insert({
                   imdbId: line[1],
                   title: line[5],
+                  director: line[7],
                   year: line[11],
+                  titleType: titleType,
                   genres: line[12].split(', '),
+                  runtime: line[10],
                   ratings: [rating]
                 })
                 count++
