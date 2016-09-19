@@ -5,7 +5,7 @@ import { Meteor } from 'meteor/meteor'
 import { App } from '../../ui/layouts/app'
 import { Index } from '../../ui/pages/index'
 import { ChatLog } from '../../ui/pages/chatlog'
-import { Musicman } from '../../ui/pages/musicman'
+import { MusicmanHistory } from '../../ui/pages/musicmanhistory'
 
 Meteor.startup(() => {
   render(
@@ -13,7 +13,7 @@ Meteor.startup(() => {
       <Route path='/' component={App}>
         <IndexRoute name='index' component={Index} />
         <Route name='chatlog' path='/chatlog' component={ChatLog} />
-        <Route name='musicman' path='/musicman' component={Musicman} />
+        <Route name='musicman' path='/musicman' component={MusicmanHistory} />
       </Route>
     </Router>,
     document.getElementById('react-root')
