@@ -34,11 +34,20 @@ Imdb.schema = new SimpleSchema({
   title: {
     type: String
   },
+  director: {
+    type: String
+  },
   year: {
     type: Number
   },
+  titleType: {
+    type: String
+  },
   genres: {
     type: [String]
+  },
+  runtime: {
+    type: Number
   },
   ratings: {
     type: [RatingsSchema],
