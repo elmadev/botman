@@ -73,7 +73,7 @@ export default function () {
 
   let getNick = (server, discordId) => {
     let user = bot.users.get(discordId)
-    return server.detailsOf(user).nick || (user ? user.username : discordId)
+    return server.detailsOf(user).nick || (user ? user.username : 'Deleted User')
   }
 
   let getMention = (discordId) => {
