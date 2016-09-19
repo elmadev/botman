@@ -16,6 +16,7 @@ export class AppNavigation extends React.Component {
         <Nav>
           <LinkContainer to='chatlog'>
             <NavItem eventKey={1} href='/chatlog'>Discord Chat Logs</NavItem>
+            <NavItem eventKey={2} href='/musicman'>Music History</NavItem>
           </LinkContainer>
         </Nav>
       </Navbar.Collapse>
