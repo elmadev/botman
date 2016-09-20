@@ -303,7 +303,7 @@ export default function () {
 
     // IMDb top lists
     } else if (command === 'imdbtop') {
-      imdbTop(args[0] ? args[0] : null, 10, (error, response) => {
+      imdbTop(args[0] ? args[0] : null, 15, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error}`)
