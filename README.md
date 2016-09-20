@@ -1,4 +1,4 @@
-# botman - the [ElastoMania Discord](http://tinyurl.com/elmadiscord) bot
+# botman - the [ElastoMania Discord](http://tinyurl.com/elmadiscord) bot [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Discord](https://discordapp.com/api/guilds/129489631539494912/widget.png)](http://discord.me/rhinohelp)
 
 Project includes a multi-purpose Discord bot based on [discord.js](https://github.com/hydrabolt/discord.js/) and (eventually) a stats website built on [Meteor](https://meteor.com).
 
