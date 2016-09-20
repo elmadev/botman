@@ -21,6 +21,7 @@ import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js
 import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
 import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
+import { recSourceHandler } from '../../../modules/recsource.js'
 
 
 export default function () {
@@ -105,6 +106,14 @@ export default function () {
   bot.on('message', Meteor.bindEnvironment(msg => {
     // Exit if msg is from a bot
     if (msg.author.bot) return
+
+    // Msg parsing for recsource upload
+    recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
+      if (error) console.error(error)
+      else {
+        bot.sendMessage(msg, result)
+      }
+    })
 
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) {
