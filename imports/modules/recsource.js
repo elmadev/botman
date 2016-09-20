@@ -7,7 +7,7 @@ const postRec = (data, callback) => {
   needle.post(url, data, (error, response, body) => {
     if (error) return callback(error)
     else if (response.statusCode !== 201) {
-      return callback(response.statusCode)
+      return callback(`${response.statusCode}: ${body}`)
     } else {
       body = JSON.parse(body)
       let result = `<http://www.recsource.tv/r/${body.id}> ${body.filename}.rec (${moment.utc(body.length * 10).format('mm:ss,SS')}) in ${body.levelname}.lev`
