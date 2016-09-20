@@ -111,7 +111,7 @@ export default function () {
     recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
       if (error) console.error(error)
       else {
-        bot.sendMessage(msg, `<${result}>`)
+        bot.sendMessage(msg, result)
       }
     })
 
