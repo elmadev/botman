@@ -24,5 +24,8 @@
   },
   "eol": {
     "channelId": "xxxxxxxxxxxxxxxxxx"
+  },
+  "recsource": {
+    "api_key": "xxxxx..."
   }
 }
