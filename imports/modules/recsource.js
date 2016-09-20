@@ -17,8 +17,15 @@ const postRec = (data, callback) => {
 }
 
 export const recSourceHandler = (msg, nick, callback) => {
-  let data = { apikey: Meteor.settings.recsource.api_key, url: null, filename: null,
-              kuski: nick, description: `<${nick}> ${msg.content}`, tags: 'autoupload, discord', public: 1 }
+  let data = {
+    apikey: Meteor.settings.recsource.api_key,
+    url: null,
+    filename: null,
+    kuski: nick,
+    description: `<${nick}> ${msg.content}`,
+    tags: 'autoupload, discord',
+    public: 1
+  }
 
   // first check if attachment is a rec
   if ((msg.attachments.length > 0) && (msg.attachments[0].filename.endsWith('.rec'))) {
