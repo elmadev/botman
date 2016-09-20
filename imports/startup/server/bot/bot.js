@@ -109,8 +109,10 @@ export default function () {
 
     // Msg parsing for recsource upload
     recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
-      if (error) console.error(error)
-      else {
+      if (error) {
+        console.error(error)
+        bot.reply(msg, error)
+      } else {
         bot.sendMessage(msg, result)
       }
     })
