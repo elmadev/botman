@@ -1,8 +1,6 @@
-import discordIRC from 'elmadev-discord-irc'
+import discordIRC from 'discord-irc'
 import { Meteor } from 'meteor/meteor'
 
 export default function () {
-  if (Meteor.settings.isProduction) {
-    discordIRC(Meteor.settings.discordIrc)
-  }
+  discordIRC(Meteor.settings.discordIrc)
 }

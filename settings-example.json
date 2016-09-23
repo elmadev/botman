@@ -31,7 +31,7 @@
   "discordIrc": [
     {
       "nickname": "discordman",
-      "server": "irc.xs4all.nl",
+      "server": "xxxxxxxxxxxxx",
       "discordToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
       "channelMapping": {
         "#general": "#discord-general",
