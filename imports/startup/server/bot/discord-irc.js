@@ -1,4 +1,4 @@
-import discordIRC from 'discord-irc'
+import discordIRC from 'elmadev-discord-irc'
 import { Meteor } from 'meteor/meteor'
 
 export default function () {

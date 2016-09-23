@@ -40,7 +40,8 @@
         "#developers": "#discord-developers",
         "#eol": "#irc_eol"
       },
-      "ircNickColor": false
+      "ircNickColor": false,
+      "commandCharacters": ["+"]
     }
   ]
 }
