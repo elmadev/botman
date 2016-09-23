@@ -53,8 +53,8 @@ export class ChatLogGrid extends React.Component {
         bordered
         striped
         hover
-        pagerOptions={{ maxButtons: 7 }}
-        resultsPerPage={100}
+        pagerOptions={{ maxButtons: 5 }}
+        resultsPerPage={50}
         condensed
         initialSort={'timestamp'}
       />

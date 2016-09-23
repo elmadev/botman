@@ -21,6 +21,7 @@ import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js
 import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
 import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
+import { recSourceHandler } from '../../../modules/recsource.js'
 
 
 export default function () {
@@ -73,7 +74,7 @@ export default function () {
 
   let getNick = (server, discordId) => {
     let user = bot.users.get(discordId)
-    return server.detailsOf(user).nick || (user ? user.username : discordId)
+    return server.detailsOf(user).nick || (user ? user.username : 'Deleted User')
   }
 
   let getMention = (discordId) => {
@@ -105,6 +106,16 @@ export default function () {
   bot.on('message', Meteor.bindEnvironment(msg => {
     // Exit if msg is from a bot
     if (msg.author.bot) return
+
+    // Msg parsing for recsource upload
+    recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
+      if (error) {
+        console.error(error)
+        bot.reply(msg, error)
+      } else {
+        bot.sendMessage(msg, result)
+      }
+    })
 
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) {
@@ -303,7 +314,7 @@ export default function () {
 
     // IMDb top lists
     } else if (command === 'imdbtop') {
-      imdbTop(10, (error, response) => {
+      imdbTop(args[0] ? args[0] : null, 10, (error, response) => {
         if (error) {
           console.error(error)
           bot.reply(msg, `Error: ${error}`)

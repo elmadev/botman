@@ -4,8 +4,12 @@
   "scripts": {
     "start": "meteor run --settings settings-development.json",
     "deploy": "mup deploy --config=mup.js --settings=settings-production.json",
-    "ngrok": "./ngrok start -config ngrok.yml http"
+    "ngrok": "./ngrok start -config ngrok.yml http",
+    "test": "standard"
   },
+  "pre-commit": [
+    "test"
+  ],
   "dependencies": {
     "bufferutil": "^1.2.1",
     "chance": "^1.0.4",
@@ -29,6 +33,7 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "pre-commit": "^1.1.3",
     "standard": "^8.0.0"
   }
 }

@@ -1,6 +1,7 @@
 # botman - the [ElastoMania Discord](http://tinyurl.com/elmadiscord) bot
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Discord](https://discordapp.com/api/guilds/207629806513160192/widget.png)](https://discord.gg/j5WMFC6)
 
-Project includes a multi-purpose Discord bot based on [discord.js](https://github.com/hydrabolt/discord.js/) and (eventually) a stats website built on [Meteor](https://meteor.com).
+Project includes a multi-purpose Discord bot based on [discord.js](https://github.com/hydrabolt/discord.js/) and a stats website built with [Meteor](https://meteor.com).
 
 Feel free to contribute.
 
@@ -34,8 +35,11 @@ Shows the link to the Google Spreadsheet containing links to songs for the Music
 ###`!imdb <title>`
 Lookup a title on imdb.com
 
-###`!imdbimport`
+###`!imdbupdate`
 Import your imdb ratings (must have set link to vote list with `!set imdb <link>` first)
+
+###`!imdbtop [series | game]`
+List servers top10 rated titles, with movies selected by default.
 
 ###`!set <setting> <value>`
 Set or update a profile setting such as:

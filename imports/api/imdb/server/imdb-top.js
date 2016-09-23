@@ -1,12 +1,17 @@
 import { check } from 'meteor/check'
 import { Imdb } from '../imdb'
 
-export const imdbTop = (limit, callback) => {
+export const imdbTop = (args, limit, callback) => {
   check(limit, Number)
   limit = limit || 10
+  let typeQuery = { titleType: 'movie' }
+  if (args) {
+    if (args.toLowerCase() === 'series') typeQuery.titleType = 'series'
+    else if (args.toLowerCase() === 'game') typeQuery.titleType = 'game'
+  }
 
   let result = Imdb.aggregate([
-    { $match: { 'ratings.1': { $exists: true } } },
+    { $match: { $and: [{ 'ratings.1': { $exists: true } }, typeQuery] } },
     { $unwind: '$ratings' },
     { $group: {
       _id: '$_id',
