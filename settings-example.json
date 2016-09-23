@@ -38,7 +38,8 @@
         "#worldcup7": "#discord-worldcup7",
         "#other-games": "#discord-other-games",
         "#developers": "#discord-developers",
-        "#eol": "#irc_eol"
+        "#eol": "#irc_eol",
+        "#across": "#across"
       },
       "ircNickColor": false,
       "commandCharacters": ["+"]

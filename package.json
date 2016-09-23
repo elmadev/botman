@@ -14,7 +14,7 @@
     "bufferutil": "^1.2.1",
     "chance": "^1.0.4",
     "discord.js": "^8.1.0",
-    "elmadev-discord-irc": "^1.0.3",
+    "elmadev-discord-irc": "^1.0.5",
     "github-webhook-handler": "^0.6.0",
     "griddle-react": "^0.6.1",
     "griddle-react-bootstrap": "^0.4.4",
