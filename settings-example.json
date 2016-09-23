@@ -27,5 +27,10 @@
   },
   "recsource": {
     "api_key": "xxxxx..."
+  },
+  "trello": {
+    "api_key": "xxxxx...",
+    "token": "xxxxx...",
+    "boardId": "xxxx..."
   }
 }

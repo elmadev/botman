@@ -22,6 +22,7 @@ import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
 import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
 import { recSourceHandler } from '../../../modules/recsource.js'
+import { trelloStartup } from '../../../modules/trello-webhook.js'
 
 
 export default function () {
@@ -58,6 +59,14 @@ export default function () {
       res.statusCode = 404
       res.end('no such location')
     })
+  })
+
+  // Trello webhook
+  trelloStartup((error, response) => {
+    if (error) console.error('Trello: ' + error)
+    else {
+      console.log(response)
+    }
   })
 
   // Internal utility functions
