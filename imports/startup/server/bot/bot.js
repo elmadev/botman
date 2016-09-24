@@ -22,7 +22,7 @@ import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
 import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
 import { recSourceHandler } from '../../../modules/recsource.js'
-import { trelloStartup } from '../../../modules/trello-webhook.js'
+import { trelloStartup, trelloHandler } from '../../../modules/trello-webhook.js'
 
 
 export default function () {
@@ -67,6 +67,14 @@ export default function () {
     else {
       console.log(response)
     }
+  })
+
+  Picker.route(`/webhook-trello/${Meteor.settings.trello.routeId}`, (params, req, res, next) => {
+    trelloHandler(req, (error, result) => {
+      if (error) console.error('Trello: ' + error)
+      else console.log('Trello: ' + result)
+    })
+    res.end()
   })
 
   // Internal utility functions

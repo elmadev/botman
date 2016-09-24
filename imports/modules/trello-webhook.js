@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor'
+import _ from 'lodash'
 import needle from 'needle'
 
 let url = 'https://api.trello.com/1/'
@@ -6,9 +7,14 @@ let key = Meteor.settings.trello.api_key
 let token = Meteor.settings.trello.token
 let boardId = Meteor.settings.trello.boardId
 
-// verify trello signing to avoid fake data
-function verifySign (data) {
-  return true
+// verify request
+function verifyRequest (req) {
+  let trelloIps = ['107.23.104.115', '107.23.149.70', '54.152.166.250', '54.164.77.56']
+  let reqIp = req.connection.remoteAddress
+  if ((req.method === 'POST') && (_.includes(trelloIps, reqIp))) {
+    return true
+  }
+  return false
 }
 
 // register new webhook
@@ -37,13 +43,12 @@ function cardHandler (data) {
 }
 
 // handler for webhook post requests
-export const trelloHandler = (data, callback) => {
-  if (verifySign(data)) {
-    let msg = cardHandler()
+export const trelloHandler = (req, callback) => {
+  if (verifyRequest(req)) {
+    let msg = cardHandler(req.body)
     return callback(null, msg)
   }
-
-  return callback('Received unauthorized trello webhook')
+  return callback('unauthorized request')
 }
 
 // startup initializer, check if webhook is still active, otherwise register a new one
