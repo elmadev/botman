@@ -62,23 +62,30 @@ export default function () {
   })
 
   // Trello webhook
-  trelloStartup((error, response) => {
-    if (error) console.error('Trello: ' + error)
-    else {
-      console.log(response)
-    }
-  })
+  let trelloChannel = Meteor.settings.trello.channelId
 
   Picker.route(`/webhook-trello/${Meteor.settings.trello.routeId}`, (params, req, res, next) => {
-    trelloHandler(req, (error, result) => {
-      if (error) {
-        console.error('Trello: ' + error)
-        res.statusCode = 403
-        res.end('unauthorized\n')
-      }
-      else console.log('Trello: ' + result)
+    let data = []
+    req.on('error', error => {
+      console.error(error)
+    }).on('data', chunk => {
+      data.push(chunk)
+    }).on('end', () => {
+      trelloHandler(req, data, (error, result) => {
+        if (error) {
+          console.error('Trello: ' + error)
+          res.statusCode = 403
+          res.end('unauthorized\n')
+        } else if (result === 'hook') {} // new hook registered, do nothing
+        else bot.sendMessage(trelloChannel, result)
+        res.end('ok')
+      })
     })
-    res.end()
+  })
+
+  trelloStartup((error, response) => {
+    if (error) console.error('Trello: ' + error)
+    else console.log('Trello: ' + response)
   })
 
   // Internal utility functions

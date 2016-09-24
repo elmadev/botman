@@ -29,9 +29,10 @@
     "api_key": "xxxxx..."
   },
   "trello": {
-    "api_key": "xxxxx...",
-    "token": "xxxxx...",
-    "boardId": "xxxx...",
-    "routeId": "discord-botman"
+    "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "boardId": "xxxxxxxxxxxxxxxxxxxxxxxx",
+    "routeId": "discord-botman",
+    "channelId": "xxxxxxxxxxxxxxxxxx"
   }
 }
