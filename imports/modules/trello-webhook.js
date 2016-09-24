@@ -10,7 +10,7 @@ let boardId = Meteor.settings.trello.boardId
 // verify request
 function verifyRequest (req) {
   let trelloIps = ['107.23.104.115', '107.23.149.70', '54.152.166.250', '54.164.77.56']
-  let reqIp = req.connection.remoteAddress
+  let reqIp = req.headers['x-forwarded-for'].split(',')[0]
   if ((req.method === 'POST') && (_.includes(trelloIps, reqIp))) {
     return true
   }
@@ -27,6 +27,7 @@ const isWebHookActive = (callback) => {
   needle.request('get', `${url}tokens/${token}/webhooks`, { key: key, token: token }, (error, response, body) => {
     if (error) return callback(response)
     else if (response.statusCode !== 200) return callback(response.statusCode)
+    // Meteor.absoluteUrl()
     return callback(null, body)
   })
 }
@@ -48,7 +49,7 @@ export const trelloHandler = (req, callback) => {
     let msg = cardHandler(req.body)
     return callback(null, msg)
   }
-  return callback('unauthorized request')
+  return callback('unauthorized request from ' + req.headers['x-forwarded-for'].split(',')[0])
 }
 
 // startup initializer, check if webhook is still active, otherwise register a new one

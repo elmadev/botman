@@ -71,7 +71,11 @@ export default function () {
 
   Picker.route(`/webhook-trello/${Meteor.settings.trello.routeId}`, (params, req, res, next) => {
     trelloHandler(req, (error, result) => {
-      if (error) console.error('Trello: ' + error)
+      if (error) {
+        console.error('Trello: ' + error)
+        res.statusCode = 403
+        res.end('unauthorized\n')
+      }
       else console.log('Trello: ' + result)
     })
     res.end()
