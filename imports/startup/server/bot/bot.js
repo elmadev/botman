@@ -77,7 +77,7 @@ export default function () {
           res.statusCode = 403
           res.end('unauthorized\n')
         } else if (result === 'hook') {} // new hook registered, do nothing
-        else bot.sendMessage(trelloChannel, result)
+        else if (result) bot.sendMessage(trelloChannel, result)
         res.end('ok')
       })
     })
