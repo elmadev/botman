@@ -27,5 +27,12 @@
   },
   "recsource": {
     "api_key": "xxxxx..."
+  },
+  "trello": {
+    "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "boardId": "xxxxxxxxxxxxxxxxxxxxxxxx",
+    "channelId": "xxxxxxxxxxxxxxxxxx"
   }
 }
