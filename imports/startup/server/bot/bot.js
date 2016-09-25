@@ -149,7 +149,9 @@ export default function () {
 
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) {
-      registerChatlog(msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      if (!msg.content.startsWith('~') && msg.channel.name !== 'talk-to-bots' && msg.channel.name !== 'nsfw') {
+        registerChatlog(msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      }
       return
     }
 
