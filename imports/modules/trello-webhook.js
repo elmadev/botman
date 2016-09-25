@@ -1,18 +1,23 @@
 import { Meteor } from 'meteor/meteor'
-import _ from 'lodash'
+import crypto from 'crypto'
 import needle from 'needle'
 
 let url = 'https://api.trello.com/1/'
 let key = Meteor.settings.trello.api_key
 let token = Meteor.settings.trello.token
+let secret = Meteor.settings.trello.secret
 let boardId = Meteor.settings.trello.boardId
 let callbackUrl = `${Meteor.absoluteUrl()}webhook-trello/${Meteor.settings.trello.routeId}/`
 
 // verify request
-function verifyRequest (req) {
-  let trelloIps = ['107.23.104.115', '107.23.149.70', '54.152.166.250', '54.164.77.56']
-  let reqIp = req.headers['x-forwarded-for'].split(',')[0]
-  if (_.includes(trelloIps, reqIp)) return true
+function verifyRequest (request, secret, callbackUrl) {
+  if (request.body) {
+    let base64Digest = function (s) { return crypto.createHmac('sha1', secret).update(s).digest('base64') }
+    let content = request.body + callbackUrl
+    let doubleHash = base64Digest(base64Digest(content))
+    let headerHash = base64Digest(request.headers['x-trello-webhook'])
+    return doubleHash === headerHash
+  }
   return false
 }
 
@@ -29,7 +34,6 @@ const registerWebHook = callback => {
 // handle card actions
 function actionHandler (data) {
   let msg
-  data = JSON.parse(data)
   if (data && data.action) {
     let userName = data.action.memberCreator.fullName
     let cardName = data.action.data.card ? data.action.data.card.name : undefined
@@ -102,14 +106,16 @@ function actionHandler (data) {
 }
 
 // handler for webhook post requests
-export const trelloHandler = (req, data, callback) => {
-  if (verifyRequest(req)) {
-    if (req.method === 'HEAD') return callback(null, 'hook')
-    else if (req.method === 'POST') {
+export const trelloHandler = (req, callback) => {
+  if (req.method === 'HEAD') return callback(null, 'hook')
+  else if (req.method === 'POST') {
+    if (verifyRequest(req, secret, callbackUrl)) {
+      let data = JSON.parse(req.body)
       let msg = actionHandler(data)
       return callback(null, msg)
     }
   }
+
   return callback('unauthorized request from ' + req.headers['x-forwarded-for'].split(',')[0])
 }
 

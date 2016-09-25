@@ -65,19 +65,21 @@ export default function () {
   let trelloChannel = Meteor.settings.trello.channelId
 
   Picker.route(`/webhook-trello/${Meteor.settings.trello.routeId}`, (params, req, res, next) => {
-    let data = []
+    let data = ''
     req.on('error', error => {
       console.error(error)
     }).on('data', chunk => {
-      data.push(chunk)
+      data += chunk
     }).on('end', () => {
-      trelloHandler(req, data, (error, result) => {
+      req.body = data
+      trelloHandler(req, (error, result) => {
         if (error) {
           console.error('Trello: ' + error)
           res.statusCode = 403
           res.end('unauthorized\n')
-        } else if (result === 'hook') {} // new hook registered, do nothing
-        else if (result) bot.sendMessage(trelloChannel, result)
+        } else if (result === 'hook') {
+          // new hook registered, do nothing for now
+        } else if (result) bot.sendMessage(trelloChannel, result)
         res.end('ok')
       })
     })
