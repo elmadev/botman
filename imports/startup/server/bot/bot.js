@@ -64,7 +64,7 @@ export default function () {
   // Trello webhook
   let trelloChannel = Meteor.settings.trello.channelId
 
-  Picker.route(`/webhook-trello/${Meteor.settings.trello.routeId}`, (params, req, res, next) => {
+  Picker.route('/webhook-trello/', (params, req, res, next) => {
     let data = ''
     req.on('error', error => {
       console.error(error)

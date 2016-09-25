@@ -7,11 +7,11 @@ let key = Meteor.settings.trello.api_key
 let token = Meteor.settings.trello.token
 let secret = Meteor.settings.trello.secret
 let boardId = Meteor.settings.trello.boardId
-let callbackUrl = `${Meteor.absoluteUrl()}webhook-trello/${Meteor.settings.trello.routeId}/`
+let callbackUrl = `${Meteor.absoluteUrl()}webhook-trello/`
 
 // verify request
 function verifyRequest (request, secret, callbackUrl) {
-  if (request.body) {
+  if (request.body && request.headers['x-trello-webhook']) {
     let base64Digest = function (s) { return crypto.createHmac('sha1', secret).update(s).digest('base64') }
     let content = request.body + callbackUrl
     let doubleHash = base64Digest(base64Digest(content))

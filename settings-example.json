@@ -33,7 +33,6 @@
     "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "boardId": "xxxxxxxxxxxxxxxxxxxxxxxx",
-    "routeId": "discord-botman",
     "channelId": "xxxxxxxxxxxxxxxxxx"
   }
 }
