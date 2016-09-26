@@ -38,7 +38,7 @@ Lookup a title on imdb.com
 ###`!imdbupdate`
 Import your imdb ratings (must have set link to vote list with `!set imdb <link>` first)
 
-###`!imdbtop [series | game] [s:votes|s:bottom]`
+###`!imdbtop [series | game] [s:votes|s:bottom] [g:drama,action,..] [y:<year>]`
 List servers top10 rated titles, with movies selected by default.
 
 ###`!set <setting> <value>`
