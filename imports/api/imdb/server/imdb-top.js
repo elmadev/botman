@@ -5,10 +5,11 @@ import _ from 'lodash'
 export const imdbTop = (args, limit, callback) => {
   check(limit, Number)
   limit = limit || 10
+  let filterDesc = ''
   let typeQuery = { titleType: 'movie' }
   let typeDesc = 'movie'
   let sortQuery = { rating: -1, count: -1 }
-  let sortDesc = 'sorted by rating'
+  let sortDesc = ', sorted by `highest rating`'
   // type
   if (args[0]) {
     if (args[0].toLowerCase() === 'series') typeQuery.titleType = typeDesc = 'series'
@@ -19,11 +20,11 @@ export const imdbTop = (args, limit, callback) => {
   if (sortOption) {
     switch (sortOption.substring(2).toLowerCase()) {
       case 'votes':
-        sortDesc = 'sorted by number of votes'
+        sortDesc = ', sorted by `number of votes`'
         sortQuery = { count: -1, rating: -1 }
         break
       case 'bottom':
-        sortDesc = 'sorted by lowest rating'
+        sortDesc = ', sorted by `lowest rating`'
         sortQuery = { rating: 1, count: -1 }
         break
       default:
@@ -31,8 +32,27 @@ export const imdbTop = (args, limit, callback) => {
     }
   }
 
+  let matchQuery = [{ 'ratings.1': { $exists: true } }, typeQuery]
+
+  // filter by genre
+  let genreFilter = _.find(args, arg => { return arg.startsWith('g:') })
+  if (genreFilter) {
+    let genres = genreFilter.substring(2).toLowerCase().split(',')
+    matchQuery.push({ genres: { $all: genres } })
+    filterDesc += `, filtered by \`${genres.join(', ')}\``
+  }
+
+  // filter by year
+  let yearFilter = _.find(args, arg => { return arg.startsWith('y:') })
+  if (yearFilter) {
+    let year = yearFilter.substring(2)
+    matchQuery.push({ year: year })
+    if (filterDesc) filterDesc += ` and year \`${year}\``
+    else filterDesc = `, filtered by year \`${year}\``
+  }
+
   let result = Imdb.aggregate([
-    { $match: { $and: [{ 'ratings.1': { $exists: true } }, typeQuery] } },
+    { $match: { $and: matchQuery } },
     { $unwind: '$ratings' },
     { $group: {
       _id: '$_id',
@@ -47,7 +67,7 @@ export const imdbTop = (args, limit, callback) => {
   ])
 
   if (result.length > 0) {
-    let msg = `**Top${limit} IMDb ${typeDesc} list, ${sortDesc}**\n`
+    let msg = `**Top${limit} IMDb \`${typeDesc}\` list${filterDesc}${sortDesc}**\n`
     for (let i = 1, j = result.length; i <= j; i++) {
       let title = result[i - 1].title
       let year = result[i - 1].year
