@@ -93,21 +93,25 @@ exports.checkQueue = function (callback) {
           queue = {}
           Object.keys(o).forEach(function (key) {
             var battle = o[key]
-            if (battle.finished === 1 && battle.index === currentid) {
+            var bfinished = parseInt(battle.finished)
+            var bindex = parseInt(battle.index)
+            var binqueue = parseInt(battle.inqueue)
+            var baborted = parseInt(battle.aborted)
+            if (bfinished === 1 && bindex === currentid && baborted === 0) {
               resultsInfo = battle
               ret.type = 1
               ret.message = currentid
             }
-            if (battle.finished === 0 && battle.inqueue === 1) {
-              queue[battle.index] = battle
+            if (bfinished === 0 && binqueue === 1 && baborted === 0) {
+              queue[bindex] = battle
             }
-            if (battle.finished === 0 && battle.inqueue === 0) {
-              if (battle.index !== currentid) {
-                currentid = battle.index
-                ret.message = 'Battle started:\n \n'
+            if (bfinished === 0 && binqueue === 0 && baborted === 0) {
+              if (bindex !== currentid) {
+                currentid = bindex
+                ret.message = '- \n - - - - - - - - - - - - - - - - - - Battle started - - - - - - - - - - - - - - - - - - \n'
                 ret.message += battle.duration + ' mins ' + battle.type + ' in **' + battle.levelname + '**.lev by **' + battle.kuski
                 ret.message += '**\n \n'
-                ret.message += 'More info: <http://elmaonline.net/battles/' + battle.index + '>'
+                ret.message += 'More info: <http://elmaonline.net/battles/' + bindex + '>'
                 ret.message += '\nMap: http://elmaonline.net/images/map/' + battle.level + '/1000/1000'
                 if (Object.keys(queue).length > 0) {
                   ret.message += '\n' + postQueue()

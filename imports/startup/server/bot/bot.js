@@ -21,6 +21,8 @@ import { registerChatlog } from '../../../api/chatlog/server/register-chatlog.js
 import { imdbSearch } from '../../../api/imdb/server/imdb-search.js'
 import { imdbUpdate } from '../../../api/imdb/server/imdb-update.js'
 import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
+import { recSourceHandler } from '../../../modules/recsource.js'
+import { trelloStartup, trelloHandler } from '../../../modules/trello-webhook.js'
 
 
 export default function () {
@@ -57,6 +59,35 @@ export default function () {
       res.statusCode = 404
       res.end('no such location')
     })
+  })
+
+  // Trello webhook
+  let trelloChannel = Meteor.settings.trello.channelId
+
+  Picker.route('/webhook-trello/', (params, req, res, next) => {
+    let data = ''
+    req.on('error', error => {
+      console.error(error)
+    }).on('data', chunk => {
+      data += chunk
+    }).on('end', () => {
+      req.body = data
+      trelloHandler(req, (error, result) => {
+        if (error) {
+          console.error('Trello: ' + error)
+          res.statusCode = 403
+          res.end('unauthorized\n')
+        } else if (result === 'hook') {
+          // new hook registered, do nothing for now
+        } else if (result) bot.sendMessage(trelloChannel, result)
+        res.end('ok')
+      })
+    })
+  })
+
+  trelloStartup((error, response) => {
+    if (error) console.error('Trello: ' + error)
+    else console.log('Trello: ' + response)
   })
 
   // Internal utility functions
@@ -106,9 +137,21 @@ export default function () {
     // Exit if msg is from a bot
     if (msg.author.bot) return
 
+    // Msg parsing for recsource upload
+    recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
+      if (error) {
+        console.error(error)
+        bot.reply(msg, error)
+      } else {
+        bot.sendMessage(msg, result)
+      }
+    })
+
     // Exit if msg doesn't start with prefix
     if (!msg.content.startsWith(prefix)) {
-      registerChatlog(msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      if (!msg.content.startsWith('~') && msg.channel.name !== 'talk-to-bots' && msg.channel.name !== 'nsfw') {
+        registerChatlog(msg.channel.name, getNick(msg.server, msg.author.id), msg.content, msg.timestamp) // Save in chat log
+      }
       return
     }
 
