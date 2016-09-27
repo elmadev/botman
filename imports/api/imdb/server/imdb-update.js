@@ -42,56 +42,59 @@ export const imdbUpdate = (user, callback) => {
 
             // parse through titles to update
             let count = 0
-            _.forEach(tmp, line => {
-              line = line.split('","') // don't need edge fields, split this way to remove substring() steps
-              let date = moment(line[2] + '+0000', 'ddd MMM D HH:mm:ss YYYY Z').toDate()
-              let rating = { discordId: user, date: date, rating: Number(line[8]) }
-              let titleType
-              switch (line[6].toLowerCase()) {
-                case 'mini-series':
-                case 'tv series':
-                  titleType = 'series'
-                  break
-                case 'video game':
-                  titleType = 'game'
-                  break
-                default:
-                  titleType = 'movie'
-              }
+            try {
+              _.forEach(tmp, line => {
+                line = line.split('","') // don't need edge fields, split this way to remove substring() steps
+                let date = moment(line[2] + '+0000', 'ddd MMM D HH:mm:ss YYYY Z').toDate()
+                let rating = { discordId: user, date: date, rating: Number(line[8]) }
+                let titleType
+                switch (line[6].toLowerCase()) {
+                  case 'mini-series':
+                  case 'tv series':
+                    titleType = 'series'
+                    break
+                  case 'video game':
+                    titleType = 'game'
+                    break
+                  default:
+                    titleType = 'movie'
+                }
 
-              let titleDoc = Imdb.findOne({ imdbId: line[1] }, { _id: 1, ratings: 1 })
-              // does title exist?
-              if (titleDoc) {
-                let index = _.findIndex(titleDoc.ratings, { discordId: user })
-                // has the user rated it already?
-                if (index > -1) {
-                  // update rating if differs
-                  if (rating.rating !== titleDoc.ratings[index].rating) {
-                    titleDoc.ratings[index] = rating
-                    Imdb.update({ _id: titleDoc._id }, { $set: { ratings: titleDoc.ratings } })
+                let titleDoc = Imdb.findOne({ imdbId: line[1] }, { _id: 1, ratings: 1 })
+                // does title exist?
+                if (titleDoc) {
+                  let index = _.findIndex(titleDoc.ratings, { discordId: user })
+                  // has the user rated it already?
+                  if (index > -1) {
+                    // update rating if differs
+                    if (rating.rating !== titleDoc.ratings[index].rating) {
+                      titleDoc.ratings[index] = rating
+                      Imdb.update({ _id: titleDoc._id }, { $set: { ratings: titleDoc.ratings } })
+                      count++
+                    }
+                  } else {
+                    // not rated by user, add rating
+                    Imdb.update({ _id: titleDoc._id }, { $addToSet: { ratings: rating } })
                     count++
                   }
                 } else {
-                  // not rated by user, add rating
-                  Imdb.update({ _id: titleDoc._id }, { $addToSet: { ratings: rating } })
+                  // title does not exist, add it along with rating
+                  Imdb.insert({
+                    imdbId: line[1],
+                    title: line[5],
+                    director: line[7],
+                    year: line[11],
+                    titleType: titleType,
+                    genres: line[12].split(', '),
+                    runtime: line[10],
+                    ratings: [rating]
+                  })
                   count++
                 }
-              } else {
-                // title does not exist, add it along with rating
-                Imdb.insert({
-                  imdbId: line[1],
-                  title: line[5],
-                  director: line[7],
-                  year: line[11],
-                  titleType: titleType,
-                  genres: line[12].split(', '),
-                  runtime: line[10],
-                  ratings: [rating]
-                })
-                count++
-              }
-            })
-
+              })
+            } catch (e) {
+              return callback('Something fucked up with !imdbupdate... try again :shrug:')
+            }
             return callback(null, { updated: count, total: tmp.length })
           }
         }))
