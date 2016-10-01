@@ -363,16 +363,25 @@ export default function () {
 
   // EOL Battle integration
   let battleChannel = Meteor.settings.eol.channelId
+  let lastmsg = ''
   setInterval(() => {
     Battle.checkQueue(ret => {
       if (ret.type === 2) {
-        bot.sendMessage(battleChannel, ret.message)
+        bot.sendMessage(battleChannel, ret.message, (err, msg) => {
+          if (err) {
+            console.log(err)
+          } else {
+            lastmsg = msg
+          }
+        })
       } else if (ret.type === 1) {
         Battle.getResults(ret.message, (ret) => {
           if (ret !== -1) {
             bot.sendMessage(battleChannel, ret)
           }
         })
+      } else if (ret.type === 3) {
+        bot.updateMessage(lastmsg, ret.message)
       }
     })
   }, 20 * 1000)

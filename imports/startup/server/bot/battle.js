@@ -1,4 +1,5 @@
 var http = require('http')
+var moment = require('moment')
 var eolapi = 'http://elmaonline.net/API/battlelist'
 var currentid = 0
 var resultsid = 0
@@ -97,6 +98,8 @@ exports.checkQueue = function (callback) {
             var bindex = parseInt(battle.index)
             var binqueue = parseInt(battle.inqueue)
             var baborted = parseInt(battle.aborted)
+            var bstarted = parseInt(battle.started)
+            var bduration = parseInt(battle.duration)
             if (bfinished === 1 && bindex === currentid && baborted === 0) {
               resultsInfo = battle
               ret.type = 1
@@ -106,17 +109,20 @@ exports.checkQueue = function (callback) {
               queue[bindex] = battle
             }
             if (bfinished === 0 && binqueue === 0 && baborted === 0) {
+              var left = (((bstarted - (60 * 60 * 10)) + (bduration * 60)) - moment().format('X'))
+              ret.message = ':elma: **Battle started** :flower: ' + moment(left, 'X').format('m:ss') + ' left \n \n' + ret.message
+              ret.message += battle.duration + ' mins ' + battle.type + ' in **' + battle.levelname + '**.lev by **' + battle.kuski
+              ret.message += '**\n \n'
+              ret.message += 'More info: <http://elmaonline.net/battles/' + bindex + '>'
+              ret.message += '\nMap: http://elmaonline.net/images/map/' + battle.level + '/1000/1000'
+              if (Object.keys(queue).length > 0) {
+                ret.message += '\n' + postQueue()
+              }
               if (bindex !== currentid) {
                 currentid = bindex
-                ret.message = '- \n - - - - - - - - - - - - - - - - - - Battle started - - - - - - - - - - - - - - - - - - \n'
-                ret.message += battle.duration + ' mins ' + battle.type + ' in **' + battle.levelname + '**.lev by **' + battle.kuski
-                ret.message += '**\n \n'
-                ret.message += 'More info: <http://elmaonline.net/battles/' + bindex + '>'
-                ret.message += '\nMap: http://elmaonline.net/images/map/' + battle.level + '/1000/1000'
-                if (Object.keys(queue).length > 0) {
-                  ret.message += '\n' + postQueue()
-                }
                 ret.type = 2
+              } else {
+                ret.type = 3
               }
             }
           })
@@ -127,6 +133,7 @@ exports.checkQueue = function (callback) {
         }
       } catch (e) {
         ret.type = -1
+        console.log(e)
         return callback(ret)
       }
     })
