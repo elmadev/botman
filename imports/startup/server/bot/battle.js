@@ -78,6 +78,21 @@ exports.getResults = function (id, callback) {
   }
 }
 
+var battleMessage = function(left, duration, type, levelname, kuski, battleindex, level){
+  let timeleft;
+  if (left === 0) {
+    timeleft = 'ended'
+  } else {
+    timeleft = moment(left, 'X').format('m:ss') + ' left'
+  }
+  let message = '<:elma:230951857164517376> **Battle started** <:flower:230953529513213953> ' + timeleft + ' \n \n'
+  message += duration + ' mins ' + type + ' in **' + levelname + '**.lev by **' + kuski
+  message += '**\n \n'
+  message += 'More info: <http://elmaonline.net/battles/' + battleindex + '>'
+  message += '\nMap: http://elmaonline.net/images/map/' + level + '/1000/1000'
+  return message
+}
+
 exports.checkQueue = function (callback) {
   var ret = {type: 0, message: ''}
   http.get(eolapi, function (res) {
@@ -104,17 +119,14 @@ exports.checkQueue = function (callback) {
               resultsInfo = battle
               ret.type = 1
               ret.message = currentid
+              ret.edit = battleMessage(0, battle.duration, battle.type, battle.levelname, battle.kuski, bindex, battle.level)
             }
             if (bfinished === 0 && binqueue === 1 && baborted === 0) {
               queue[bindex] = battle
             }
             if (bfinished === 0 && binqueue === 0 && baborted === 0) {
               var left = (((bstarted - (60 * 60 * 10)) + (bduration * 60)) - moment().format('X'))
-              ret.message = ':elma: **Battle started** :flower: ' + moment(left, 'X').format('m:ss') + ' left \n \n' + ret.message
-              ret.message += battle.duration + ' mins ' + battle.type + ' in **' + battle.levelname + '**.lev by **' + battle.kuski
-              ret.message += '**\n \n'
-              ret.message += 'More info: <http://elmaonline.net/battles/' + bindex + '>'
-              ret.message += '\nMap: http://elmaonline.net/images/map/' + battle.level + '/1000/1000'
+              ret.message = battleMessage(left, battle.duration, battle.type, battle.levelname, battle.kuski, bindex, battle.level)
               if (Object.keys(queue).length > 0) {
                 ret.message += '\n' + postQueue()
               }

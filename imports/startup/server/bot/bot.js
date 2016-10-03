@@ -375,6 +375,7 @@ export default function () {
           }
         })
       } else if (ret.type === 1) {
+        bot.updateMessage(lastmsg, ret.edit)
         Battle.getResults(ret.message, (ret) => {
           if (ret !== -1) {
             bot.sendMessage(battleChannel, ret)
