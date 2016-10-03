@@ -78,8 +78,8 @@ exports.getResults = function (id, callback) {
   }
 }
 
-var battleMessage = function(left, duration, type, levelname, kuski, battleindex, level){
-  let timeleft;
+var battleMessage = function (left, duration, type, levelname, kuski, battleindex, level) {
+  let timeleft
   if (left === 0) {
     timeleft = 'ended'
   } else {
