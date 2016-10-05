@@ -9,7 +9,6 @@ import { RequestLogic } from './requests/request-logic.js'
 
 // Functions
 import { registerUser } from '../../../api/users/server/register-user.js'
-import { recSourceHandler } from '../../../modules/recsource.js'
 import { trelloStartup, trelloHandler } from '../../../modules/trello-webhook.js'
 
 export default function () {
@@ -101,20 +100,6 @@ export default function () {
   // Process messages
   bot.on('message', Meteor.bindEnvironment(msg => {
     let request = new Request(msg, bot)
-    if (request.senderIsBot()) return
-
-    // Msg parsing for recsource upload
-    recSourceHandler(msg, getNick(msg.server, msg.author.id), (error, result) => {
-      if (error) {
-        console.error(error)
-        bot.reply(msg, error)
-      } else {
-        bot.sendMessage(msg, result)
-      }
-    })
-
-    if (!request.hasValidPrefix()) return
-
     new RequestLogic(request).handleRequest()
   }))
 
