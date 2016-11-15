@@ -108,7 +108,8 @@ export default function () {
   }
 
   let getMention = (discordId) => {
-    return bot.users.get(discordId).mention()
+    let user = bot.users.get(discordId)
+    return user ? user.mention() : null
   }
 
   bot.on('ready', () => {
