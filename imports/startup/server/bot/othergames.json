@@ -8,6 +8,14 @@
     "emoji": ":gun:"
   },
   {
+    "name": "Don't Starve Together",
+    "command": "starve",
+    "aliases": ["dontstarve", "ds"],
+    "steam": "http://store.steampowered.com/app/322330/",
+    "g2a": "https://www.g2a.com/don-t-starve-together-beta-steam-cd-key-global.html",
+    "emoji": ":fire:"
+  },
+  {
     "name": "Rocket League",
     "command": "rocket",
     "aliases": ["rl", "roket", "rocketleague", "carfutbol"],

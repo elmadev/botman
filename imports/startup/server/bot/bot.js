@@ -109,7 +109,8 @@ export default function () {
 
   let getMention = (discordId) => {
     let user = bot.users.get(discordId)
-    return user ? user.mention() : null
+    console.log(user)
+    return user ? user.mention() : 'Deleted User'
   }
 
   bot.on('ready', () => {
