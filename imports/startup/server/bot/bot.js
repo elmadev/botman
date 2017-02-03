@@ -7,7 +7,6 @@ import Loggables from './loggables'
 import OtherGames from './othergames'
 import { allowedProfileFields, loggableItemsWithAliases, loggingStatsCommands, gameNotifiers } from './settings'
 import { Picker } from 'meteor/meteorhacks:picker'
-import createHandler from 'github-webhook-handler'
 import Battle from './battle'
 
 // Functions
@@ -24,7 +23,6 @@ import { imdbTop } from '../../../api/imdb/server/imdb-top.js'
 import { recSourceHandler } from '../../../modules/recsource.js'
 import { trelloStartup, trelloHandler } from '../../../modules/trello-webhook.js'
 
-
 export default function () {
   let bot = new Discord.Client()
   let settings = Meteor.settings.discord
@@ -33,32 +31,6 @@ export default function () {
   let lfm = new LastfmAPI({
     'api_key': Meteor.settings.lastfm.api_key,
     'secret': Meteor.settings.lastfm.secret
-  })
-
-  // Github webhook
-  let handler = createHandler({ path: '/webhook-github', secret: Meteor.settings.github.secret })
-  let githubChannel = Meteor.settings.github.channelId
-
-  handler.on('error', function (err) {
-    console.error('Error:', err.message)
-  })
-
-  handler.on('push', function (event) {
-    console.log('GitHub Push event payload:', event.payload)
-    let name = event.payload.pusher.name
-    let branch = event.payload.ref.substring(11)
-    let repo = event.payload.repository.full_name
-    let msg = event.payload.head_commit.message
-    let compare = event.payload.compare
-    bot.sendMessage(githubChannel, `**${name}** pushed a commit to \`${branch}\` in **${repo}**: *"${msg}"*. <${compare}>`)
-  })
-
-  Picker.route('/webhook-github', function (params, req, res, next) {
-    handler(req, res, function (err) {
-      if (err) {}
-      res.statusCode = 404
-      res.end('no such location')
-    })
   })
 
   // Trello webhook
@@ -109,7 +81,6 @@ export default function () {
 
   let getMention = (discordId) => {
     let user = bot.users.get(discordId)
-    console.log(user)
     return user ? user.mention() : 'Deleted User'
   }
 

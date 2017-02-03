@@ -11,10 +11,6 @@
   	"clientID": "xxxxxxxxxxxxxxxxxx",
   	"secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
-  "github": {
-    "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "channelId": "xxxxxxxxxxxxxxxxxx"
-  },
   "lastfm": {
     "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
